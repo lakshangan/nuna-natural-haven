@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
@@ -7,6 +8,7 @@ import product3 from "@/assets/product-3.jpg";
 const products = [
   {
     id: 1,
+    slug: "nourishing-hair-oil",
     name: "Nourishing Hair Oil",
     price: 32,
     image: product1,
@@ -15,6 +17,7 @@ const products = [
   },
   {
     id: 2,
+    slug: "soothing-face-cream",
     name: "Soothing Face Cream",
     price: 42,
     image: product2,
@@ -23,6 +26,7 @@ const products = [
   },
   {
     id: 3,
+    slug: "healing-body-butter",
     name: "Healing Body Butter",
     price: 38,
     image: product3,
@@ -47,8 +51,9 @@ export const FeaturedProducts = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {products.map((product, index) => (
-            <div
+            <Link
               key={product.id}
+              to={`/product/${product.slug}`}
               className="group bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 animate-reveal"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -64,7 +69,7 @@ export const FeaturedProducts = () => {
                     className="bg-white text-primary hover:bg-white/90 font-medium uppercase tracking-wider w-full"
                     size="lg"
                   >
-                    Quick Add
+                    View Details
                   </Button>
                 </div>
               </div>
@@ -85,14 +90,8 @@ export const FeaturedProducts = () => {
                     {product.ingredients}
                   </Badge>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full uppercase tracking-wider"
-                >
-                  View Details
-                </Button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
