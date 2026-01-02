@@ -2,11 +2,15 @@ import { useState, useEffect } from "react";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
+import { CartSheet } from "./CartSheet";
+import { useAuth } from "@/contexts/AuthContext";
+import { User, LogOut } from "lucide-react";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,24 +35,23 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "glass border-b border-border/20 shadow-sm"
-          : "bg-background/50 backdrop-blur-sm"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? "glass border-b border-border/20 shadow-sm"
+        : "bg-background/50 backdrop-blur-sm"
+        }`}
       style={{
         height: "var(--nav-height, 72px)",
       }}
     >
       <div className="container mx-auto px-6 h-full flex items-center justify-between max-w-[1180px]">
         {/* Logo */}
-       <Link to="/" className="flex items-center">
-  <img 
-    src="/Nuna_Name Logo_RGB_Black.png" 
-    alt="Nuna Logo"
-    className="h-10 w-auto md:h-12 object-contain hover:opacity-80 transition-opacity"
-  />
-</Link>
+        <Link to="/" className="flex items-center">
+          <img
+            src="/Nuna_Name Logo_RGB_Black.png"
+            alt="Nuna Logo"
+            className="h-10 w-auto md:h-12 object-contain hover:opacity-80 transition-opacity"
+          />
+        </Link>
 
         {/* Desktop Navigation - Modern Pill Style */}
         <div className="hidden md:flex items-center gap-3">
@@ -60,10 +63,9 @@ export const Navbar = () => {
                 className={`
                   relative px-6 py-2 rounded-full text-sm font-medium uppercase tracking-wider
                   transition-all duration-300 ease-out
-                  ${
-                    isActive(link.href)
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
+                  ${isActive(link.href)
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
                   }
                 `}
               >
@@ -71,18 +73,31 @@ export const Navbar = () => {
               </Link>
             ))}
           </nav>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative ml-2 hover:scale-110 transition-transform duration-200"
-            aria-label="Shopping cart"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-semibold flex items-center justify-center text-accent-foreground">
-              0
-            </span>
-          </Button>
+
+          <CartSheet />
+
+          {user ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => signOut()}
+              className="hover:text-destructive transition-colors ml-2"
+              title="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:text-accent transition-colors ml-2"
+                title="Login"
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -110,10 +125,9 @@ export const Navbar = () => {
                 className={`
                   text-sm font-medium uppercase tracking-wider py-3 px-4 rounded-lg
                   transition-all duration-200 animate-reveal
-                  ${
-                    isActive(link.href)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground/80 hover:text-primary hover:bg-muted/50"
+                  ${isActive(link.href)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground/80 hover:text-primary hover:bg-muted/50"
                   }
                 `}
                 style={{ animationDelay: `${index * 0.05}s` }}
@@ -122,10 +136,9 @@ export const Navbar = () => {
                 {link.label}
               </Link>
             ))}
-            <Button variant="outline" className="w-full justify-start gap-2 mt-4">
-              <ShoppingBag className="h-4 w-4" />
-              Cart (0)
-            </Button>
+            <div className="mt-4 border-t border-border/20 pt-4">
+              <CartSheet />
+            </div>
           </div>
         </div>
       )}
