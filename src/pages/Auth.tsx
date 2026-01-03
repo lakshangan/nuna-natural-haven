@@ -44,7 +44,7 @@ const Auth = () => {
                         <CardHeader className="text-center space-y-1">
                             <CardTitle className="text-3xl font-heading font-bold text-primary">Account</CardTitle>
                             <CardDescription>
-                                Join the Nuna family for a personalized botanical experience
+                                Join the Renu family for a personalized botanical experience
                             </CardDescription>
                             <TabsList className="grid w-full grid-cols-2 mt-4 bg-muted/50 p-1">
                                 <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Login</TabsTrigger>

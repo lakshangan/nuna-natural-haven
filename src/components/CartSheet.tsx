@@ -99,7 +99,7 @@ export const CartSheet = () => {
                                                     <h4 className="font-heading font-semibold text-primary/90 leading-tight mb-1">
                                                         {item.name}
                                                     </h4>
-                                                    <p className="text-accent font-bold">${item.price}</p>
+                                                    <p className="text-accent font-bold">₹{item.price}</p>
                                                 </div>
                                                 <button
                                                     onClick={() => removeItem(item.id)}
@@ -140,7 +140,7 @@ export const CartSheet = () => {
                         <div className="space-y-1.5">
                             <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>Subtotal</span>
-                                <span>${totalPrice.toFixed(2)}</span>
+                                <span>₹{totalPrice.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>Shipping</span>
@@ -149,7 +149,7 @@ export const CartSheet = () => {
                             <Separator className="my-3 opacity-50" />
                             <div className="flex justify-between items-center py-2">
                                 <span className="text-lg font-heading font-bold text-primary">Total Amount</span>
-                                <span className="text-2xl font-bold text-accent">${totalPrice.toFixed(2)}</span>
+                                <span className="text-2xl font-bold text-accent">₹{totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
                         <Button

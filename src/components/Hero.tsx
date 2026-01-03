@@ -95,7 +95,7 @@ export const Hero = () => {
                     Nourishing Hair Oil
                   </h3>
                   <span className="text-xl font-semibold text-accent">
-                    $32
+                    ₹32
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">

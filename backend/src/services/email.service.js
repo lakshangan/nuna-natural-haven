@@ -12,7 +12,7 @@ export const sendOrderConfirmationEmail = async (email, orderDetails) => {
         const itemsHtml = items.map(item => `
             <div style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 <strong>${item.name}</strong> x ${item.quantity}<br>
-                Price: $${item.price}
+                Price: ₹${item.price}
             </div>
         `).join('');
 
@@ -33,7 +33,7 @@ export const sendOrderConfirmationEmail = async (email, orderDetails) => {
                     <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         ${itemsHtml}
                         <div style="margin-top: 15px; font-size: 18px;">
-                            <strong>Order Total: $${total}</strong>
+                            <strong>Order Total: ₹${total}</strong>
                         </div>
                     </div>
                     

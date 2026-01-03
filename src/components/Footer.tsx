@@ -34,8 +34,8 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="font-heading text-2xl font-semibold">
-              RENU's Nature World
+            <h3 className="font-heading text-2xl font-bold">
+              RENU'S <span className="text-accent">NATURAL HAVEN</span>
             </h3>
             <p className="text-sm text-warm-cream/80 leading-relaxed">
               Handcrafted herbal remedies for those who seek the best that

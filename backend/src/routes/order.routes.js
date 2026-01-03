@@ -1,6 +1,6 @@
 import express from 'express';
-import { protect } from '../middleware/auth.middleware.js';
 import { sendOrderConfirmationEmail } from '../services/email.service.js';
+import { supabase } from '../config/db.js';
 
 const router = express.Router();
 
@@ -8,32 +8,55 @@ const router = express.Router();
 // @route   POST /api/orders/checkout
 router.post('/checkout', async (req, res) => {
     try {
-        const { items, total } = req.body;
+        const { items, total, email } = req.body;
 
-        // 🎓 Learning Note: 
-        // In a real production app, we would use the Stripe SDK here:
-        // const session = await stripe.checkout.sessions.create({...})
-
-        console.log(`💳 Processing checkout for ${items.length} items. Total: $${total}`);
-
-        // 📧 Triggering email (in production this happens after Stripe webhook confirmation)
-        // For simulation, we trigger it right away if an email is provided
-        const { email } = req.body;
-        if (email) {
-            await sendOrderConfirmationEmail(email, {
+        // 1. Persist Order to Supabase
+        // We use total_amount to satisfy original schema AND total for our new dashboard
+        const { data: order, error: orderError } = await supabase
+            .from('orders')
+            .insert([{
                 items,
                 total,
-                orderNumber: `RN-${Math.floor(10000 + Math.random() * 90000)}`
-            });
+                total_amount: total, // For original schema compatibility
+                customer_email: email,
+                status: 'pending'
+            }])
+            .select()
+            .single();
+
+        if (orderError) {
+            console.error('❌ Database Error during checkout:', orderError);
+            // If DB fails, we still want to return a response but maybe with a warning
         }
 
-        // For now, we simulate a Stripe URL
+        console.log(`💳 Processing checkout for ${items.length} items. Total: ₹${total}`);
+
+        // 📧 Triggering email
+        try {
+            if (email) {
+                await sendOrderConfirmationEmail(email, {
+                    items,
+                    total,
+                    orderNumber: order ? `RN-${order.id}` : `RN-${Math.floor(10000 + Math.random() * 90000)}`
+                });
+            }
+        } catch (emailErr) {
+            console.error('📧 Email failed but continuing checkout:', emailErr);
+        }
+
+        // Return the local success URL
         res.status(200).json({
-            url: "https://buy.stripe.com/test_sample_link",
-            message: "Stripe Session Created & Confirmation Email Triggered"
+            success: true,
+            url: "http://localhost:8080/checkout-success",
+            orderId: order?.id
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('🔥 Checkout Controller Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 

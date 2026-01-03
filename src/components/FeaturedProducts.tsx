@@ -80,7 +80,7 @@ export const FeaturedProducts = () => {
                       {product.name}
                     </h3>
                     <span className="text-xl font-semibold text-accent">
-                      ${product.price}
+                      ₹{product.price}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">

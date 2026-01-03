@@ -14,6 +14,7 @@ import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
 import gallery1 from "@/assets/product-gallery-1.jpg";
 import gallery2 from "@/assets/product-gallery-2.jpg";
+import { resolveProductImage } from "@/lib/image-utils";
 
 const productData: Record<string, any> = {
   "nourishing-hair-oil": {
@@ -136,10 +137,16 @@ const ProductDetail = () => {
     ...staticData,
     ...dbProduct,
     // Ensure images array exists, fallback to db image_url if needed
-    images: staticData?.images || [dbProduct.image_url],
+    images: staticData?.images || [resolveProductImage(dbProduct.image_url)],
     name: dbProduct.name,
     price: dbProduct.price,
     description: dbProduct.description,
+    // Safely handle ingredients whether they are an array or comma-separated string
+    ingredients: Array.isArray(dbProduct.ingredients)
+      ? dbProduct.ingredients
+      : (typeof dbProduct.ingredients === 'string'
+        ? dbProduct.ingredients.split(',').map((i: string) => ({ name: i.trim(), benefit: "Natural Botanical" }))
+        : staticData?.ingredients || [])
   } : staticData;
 
   const [selectedImage, setSelectedImage] = useState(0);
@@ -161,7 +168,7 @@ const ProductDetail = () => {
       slug: product.slug,
       name: product.name,
       price: product.price,
-      image: product.image_url || (product.images && product.images[0]),
+      image: resolveProductImage(product.image_url || (product.images && product.images[0])),
       // size: selectedSize // CartItem doesn't have size yet, I'll ignore for now or add to CartItem
     }, quantity);
 
@@ -242,7 +249,7 @@ const ProductDetail = () => {
                 <p className="text-xl text-muted-foreground mb-4">
                   {product.shortDescription}
                 </p>
-                <div className="text-3xl font-bold text-accent mb-6">${product.price}</div>
+                <div className="text-3xl font-bold text-accent mb-6">₹{product.price}</div>
               </div>
 
               {/* Trust Badges */}
@@ -312,7 +319,7 @@ const ProductDetail = () => {
                 className="w-full uppercase tracking-wider text-lg py-6"
                 onClick={handleAddToCart}
               >
-                Add to Cart - ${product.price * quantity}
+                Add to Cart - ₹{product.price * quantity}
               </Button>
 
               {/* Description */}

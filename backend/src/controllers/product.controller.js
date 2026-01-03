@@ -35,3 +35,59 @@ export const getProductBySlug = async (req, res) => {
         res.status(404).json({ message: "Product not found" });
     }
 };
+
+// @desc    Create a product
+// @route   POST /api/products
+// @access  Private/Admin
+export const createProduct = async (req, res) => {
+    try {
+        const productData = req.body;
+        const { data, error } = await supabase
+            .from('products')
+            .insert([productData])
+            .select();
+
+        if (error) throw error;
+        res.status(201).json(data[0]);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+export const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const productData = req.body;
+        const { data, error } = await supabase
+            .from('products')
+            .update(productData)
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        res.status(200).json(data[0]);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
+export const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        res.status(200).json({ message: 'Product deleted' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

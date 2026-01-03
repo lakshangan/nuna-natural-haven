@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
+import { resolveProductImage } from "@/lib/image-utils";
 
 const products = [
   {
@@ -61,7 +62,7 @@ const Shop = () => {
       slug: product.slug,
       name: product.name,
       price: product.price,
-      image: product.image_url || product.image,
+      image: resolveProductImage(product.image_url || product.image),
     };
 
     addItem(cartProduct);
@@ -110,7 +111,7 @@ const Shop = () => {
                 >
                   <div className="aspect-square overflow-hidden relative">
                     <img
-                      src={product.image_url || product.image}
+                      src={resolveProductImage(product.image_url || product.image)}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
@@ -140,7 +141,7 @@ const Shop = () => {
                           {product.name}
                         </h3>
                         <span className="text-xl font-semibold text-accent">
-                          ${product.price}
+                          ₹{product.price}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
