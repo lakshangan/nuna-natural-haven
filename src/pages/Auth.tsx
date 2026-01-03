@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, User as UserIcon } from "lucide-react";
 
 const Auth = () => {
     const [loading, setLoading] = useState(false);
@@ -21,38 +20,18 @@ const Auth = () => {
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    full_name: fullName,
-                },
-            },
-        });
-
-        if (error) {
-            toast.error(error.message);
-        } else {
-            toast.success("Check your email for the confirmation link!");
-        }
+        // Supabase usage removed from frontend.
+        // Backend should handle auth in a real application.
+        toast.info("Registration is currently handled by the backend. This is a frontend demo.");
         setLoading(false);
     };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-
-        if (error) {
-            toast.error(error.message);
-        } else {
-            toast.success("Welcome back!");
-            navigate("/");
-        }
+        // Supabase usage removed from frontend.
+        // Backend should handle auth in a real application.
+        toast.info("Login functionality has been moved to the backend.");
         setLoading(false);
     };
 
@@ -123,7 +102,7 @@ const Auth = () => {
                                     <div className="space-y-2">
                                         <Label htmlFor="name">Full Name</Label>
                                         <div className="relative">
-                                            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                            <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 id="name"
                                                 placeholder="Jane Doe"

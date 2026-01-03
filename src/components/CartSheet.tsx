@@ -5,8 +5,50 @@ import { useCart } from "@/contexts/CartContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+
 export const CartSheet = () => {
     const { cart, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCheckout = async () => {
+        if (cart.length === 0) return;
+
+        try {
+            toast.loading("Preparing your secure checkout...");
+
+            // In a real app, we send this to our backend
+            const response = await fetch("http://localhost:5050/api/orders/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: cart,
+                    total: totalPrice,
+                    email: user?.email || "customer@example.com" // Sending email for confirmation
+                }),
+            });
+
+            if (!response.ok) throw new Error("Backend offline or error");
+
+            const data = await response.json();
+            // Redirect to the Stripe URL provided by our backend
+            window.location.href = data.url;
+
+        } catch (error) {
+            console.error("Checkout Error:", error);
+            toast.dismiss();
+            toast.error("The manual backend is not responding. Ensure 'npm run dev' is running in the /backend folder!");
+
+            // Fallback for learning: mock successful order
+            const confirmMock = window.confirm("Manual Backend Error: Would you like to simulate a successful checkout for training purposes?");
+            if (confirmMock) {
+                navigate("/checkout-success");
+            }
+        }
+    };
 
     return (
         <Sheet>
@@ -110,7 +152,10 @@ export const CartSheet = () => {
                                 <span className="text-2xl font-bold text-accent">${totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
-                        <Button className="w-full bg-accent hover:bg-accent/90 text-white h-14 text-lg font-bold shadow-xl shadow-accent/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <Button
+                            onClick={handleCheckout}
+                            className="w-full bg-accent hover:bg-accent/90 text-white h-14 text-lg font-bold shadow-xl shadow-accent/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
                             Proceed to Checkout
                         </Button>
                         <p className="text-[10px] text-center text-muted-foreground italic px-4">

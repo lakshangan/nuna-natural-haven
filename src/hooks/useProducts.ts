@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface Product {
     id: string;
@@ -12,20 +11,33 @@ export interface Product {
     image_url: string;
 }
 
+const BACKEND_URL = 'http://localhost:5050';
+
 export const useProducts = () => {
     return useQuery({
         queryKey: ['products'],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                throw new Error(error.message);
+            const response = await fetch(`${BACKEND_URL}/api/products`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-
-            return data as Product[];
+            return response.json() as Promise<Product[]>;
         },
+    });
+};
+
+export const useProduct = (slug: string) => {
+    return useQuery({
+        queryKey: ['product', slug],
+        queryFn: async () => {
+            if (!slug) return null;
+            const response = await fetch(`${BACKEND_URL}/api/products/${slug}`);
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error('Network response was not ok');
+            }
+            return response.json() as Promise<Product>;
+        },
+        enabled: !!slug,
     });
 };

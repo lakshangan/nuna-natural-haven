@@ -5,7 +5,10 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, ChevronLeft, Leaf, Award, Package } from "lucide-react";
+import { Star, ChevronLeft, Leaf, Award, Package, Loader2 } from "lucide-react";
+import { useProduct } from "@/hooks/useProducts";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
@@ -122,10 +125,56 @@ const productData: Record<string, any> = {
 
 const ProductDetail = () => {
   const { slug } = useParams();
-  const product = slug ? productData[slug] : null;
+  const { addItem } = useCart();
+  const { data: dbProduct, isLoading } = useProduct(slug || "");
+
+  // Get static metadata
+  const staticData = slug ? productData[slug] : null;
+
+  // Merge backend data with static metadata
+  const product = dbProduct ? {
+    ...staticData,
+    ...dbProduct,
+    // Ensure images array exists, fallback to db image_url if needed
+    images: staticData?.images || [dbProduct.image_url],
+    name: dbProduct.name,
+    price: dbProduct.price,
+    description: dbProduct.description,
+  } : staticData;
+
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "");
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+  // Set initial size when product loads
+  useState(() => {
+    if (product?.sizes?.[0]) {
+      setSelectedSize(product.sizes[0]);
+    }
+  });
+
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    addItem({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      image: product.image_url || (product.images && product.images[0]),
+      // size: selectedSize // CartItem doesn't have size yet, I'll ignore for now or add to CartItem
+    }, quantity);
+
+    toast.success(`${product.name} added to cart!`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -169,11 +218,10 @@ const ProductDetail = () => {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                      selectedImage === index
-                        ? "border-primary shadow-md scale-105"
-                        : "border-transparent hover:border-border"
-                    }`}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedImage === index
+                      ? "border-primary shadow-md scale-105"
+                      : "border-transparent hover:border-border"
+                      }`}
                   >
                     <img
                       src={image}
@@ -223,11 +271,10 @@ const ProductDetail = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-6 py-3 rounded-lg border-2 font-medium transition-all duration-200 ${
-                        selectedSize === size
-                          ? "border-primary bg-primary text-primary-foreground shadow-md"
-                          : "border-border hover:border-primary"
-                      }`}
+                      className={`px-6 py-3 rounded-lg border-2 font-medium transition-all duration-200 ${selectedSize === size
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-border hover:border-primary"
+                        }`}
                     >
                       {size}
                     </button>
@@ -263,6 +310,7 @@ const ProductDetail = () => {
               <Button
                 size="lg"
                 className="w-full uppercase tracking-wider text-lg py-6"
+                onClick={handleAddToCart}
               >
                 Add to Cart - ${product.price * quantity}
               </Button>

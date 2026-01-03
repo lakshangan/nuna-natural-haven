@@ -69,7 +69,7 @@ const Shop = () => {
   };
 
   if (error) {
-    console.error("Supabase Error:", error);
+    console.error("Backend Error:", error);
   }
 
   return (

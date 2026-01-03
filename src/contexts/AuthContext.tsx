@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
-    user: User | null;
+    user: any | null;
     loading: boolean;
     signOut: () => Promise<void>;
 }
@@ -11,26 +9,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<any | null>(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Check active sessions and sets the user
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
-
-        // Listen for changes on auth state (logged in, signed out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
+        // Mock authentication check
+        // In the future, this should call your backend API
+        setUser(null);
+        setLoading(false);
     }, []);
 
     const signOut = async () => {
-        await supabase.auth.signOut();
+        // Mock sign out
+        setUser(null);
     };
 
     return (
