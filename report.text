@@ -2,69 +2,72 @@
 Modern E-Commerce for Organic & Natural Wellness
 
 1. Project Overview
-Renu's Natural Haven is a high-end, responsive e-commerce platform dedicated to organic skincare and wellness products. The project focuses on a "Nature-First" aesthetic, combining premium UI design with a robust full-stack architecture to provide a seamless shopping experience.
+Renu's Natural Haven is a high-end, responsive e-commerce platform dedicated to organic skincare and wellness products. The project has evolved into a robust full-stack application with a "Nature-First" aesthetic, combining premium UI design with a secure, decoupled architecture.
 
-2. Technical Stack
-The project is built using a modern decoupled architecture (Frontend and Backend separated for scalability).
+2. Updated Technical Stack
+The project now follows a professional decoupled architecture (Frontend and Backend separated), ensuring scalability and security.
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| Frontend | React (Vite + TS) | Fast, component-based UI with Type safety. |
+| Frontend | React (Vite + TS) | Fast, component-based UI with strict type safety. |
 | Styling | Tailwind CSS | Utility-first styling for premium responsive design. |
-| Animations | Framer Motion | Smooth transitions and micro-interactions. |
-| Backend | Node.js + Express | Custom API for product logic and payment handling. |
-| Database | Supabase (PostgreSQL) | Real-time database and secure data storage. |
-| Authentication | Supabase Auth | Secure user login/signup and session management. |
+| Animations | Framer Motion | Smooth transitions and luxurious micro-interactions. |
+| Backend | Node.js + Express | Custom API serving as the middleware and logic layer. |
+| Database | Supabase (PostgreSQL) | Managed database for product data and user profiles. |
+| Auth | Supabase + Google | Secure multi-method authentication (Email & Google OAuth). |
+| State | React Query | Server-state management for efficient data fetching/caching. |
+| Analytics | Vercel Analytics | Real-time traffic and user behavior tracking. |
 | Payments | Stripe | Industry-standard secure payment processing. |
 
-3. System Architecture
-The application follows a Modular Client-Server Pattern.
+3. Advanced System Architecture
+The application has transitioned from a client-heavy model to a proper Client-Server-Database pattern.
 
 Logic Flow:
-- Frontend: Acts as the "Face" of the app, managing state (Cart, User) locally using React Context.
-- Backend: Acts as the "Brain", securing sensitive operations like Stripe checkouts and fetching products from Supabase.
-- Supabase: Acts as the "Memory", storing product details, user profiles, and images.
+- Frontend (Client): The visual interface. It no longer connects directly to Supabase for data (promoting security). It consumes the custom Backend API.
+- Backend (API): The "Bridge" and "Security Guard". It handles all communications with Supabase, validates requests, and processes sensitive Stripe operations.
+- Supabase (Store): Stores all persistent data securely, accessed only by the backend.
 
-4. Core Logic & Features
+4. Key Features & New Changes
 
-Product Management:
-- Dynamic Routing: Each product has a unique slug (e.g., /product/natural-glow-oil).
-- API Integration: The backend fetches product data directly from Supabase tables to ensure the latest stock/price is always shown.
+Branding & Identity:
+- New Visual Identity: Integrated the "Nuna" brand identity with the implementation of `nunalogo.png` across the platform (Navbar, Footer, Auth pages).
 
-Shopping Cart System:
-- Context API: Used to manage the cart globally. Users can add/remove items from any page without losing their selection.
-- Persistence: Cart data is synced so users don't lose items on accidental refreshes.
+Product System (API Driven):
+- Backend Proxying: Switched from Supabase clients to RESTful API endpoints (/api/products).
+- useProducts & useProduct Hooks: Implemented custom hooks for efficient data fetching with loading states and error handling.
+- Dynamic Detail Pages: Deep-linking and product-specific renders via slug-based routing.
 
-Authentication Flow:
-- Hybrid Security: Users sign up via Supabase Auth. This provides enterprise-grade security (JWT tokens) without the need for manual password hashing logic on the backend.
+Admin Ecosystem:
+- Admin Dashboard: A newly implemented administrative suite (/admin) for managing the store.
+- Product Manager: Interface to add, edit, or remove products without touching the database code.
+- Order & Customer Tracking: Dedicated views for monitoring business performance.
 
-Checkout Logic:
-1. User clicks "Checkout".
-2. Backend creates a Stripe Session.
-3. Backend triggers an Automated Email Confirmation via Resend API.
-4. User is redirected to Stripe's secure portal.
-5. On success, user returns to /checkout-success and the order is recorded.
+Security & Authentication:
+- Google OAuth Integration: Users can now sign in using their Google accounts for a friction-less experience.
+- Protected Routes: Admin areas are secured, ensuring only authorized personnel can access sensitive data.
+
+Shopping Experience:
+- Persisted Cart: Global state management using Context API ensures the cart remains intact during navigation.
+- Stripe Checkout: Seamless transition from cart to secure payment, with automated confirmation logic.
 
 5. Directory Structure
 
 - src/: FRONTEND (The Visuals)
-  - components/: Reusable UI (Buttons, Cards, Modals)
-  - pages/: View logic (Shop, Ingredients, Auth)
-  - contexts/: State management (Cart, Auth)
-  - lib/: Utils (Supabase Client, Helpers)
+  - components/: Modular UI elements (Glassmorphic cards, premium buttons).
+  - hooks/: Custom logic for API interaction (useProducts).
+  - pages/: Core views (Shop, ProductDetail, Ingredients).
+  - pages/admin/: Detailed admin sub-system.
+  - contexts/: Global state (Cart, Auth).
 
-- backend/: BACKEND (The Brain)
-  - src/controllers/: Business logic (What happens when you click)
-  - src/routes/: API Endpoints (/api/products)
-  - src/config/: Secrets & Environment settings
-
-- root/: Project configs (Tailwind, TS, Vite)
+- backend/: BACKEND (The Core)
+  - src/routes/: Express routes for products, orders, and payments.
+  - src/controllers/: Brain of the app (CRUD operations, Logic).
+  - src/config/: Secure environment variables (Supabase Keys, Stripe Secrets).
 
 6. Design Philosophy
-- Typography: Using clean, modern fonts (Inter/Outfit) for readability.
-- Palate: Earthy tones (Greens, Creams, Soft Browns) to reflect the "Natural" brand.
-- Glassmorphism: Subtle translucent backgrounds on cards to give a "premium/expensive" feel.
-- Micro-animations: Elements slide or fade in as you scroll to keep the user engaged.
+- Neo-Brutalist Luxury: A mix of earthy tones (Greens, Creams) with bold typography and high-contrast elements.
+- Premium Feel: Heavy use of glassmorphism, subtle gradients, and motion-blur transitions.
+- Mobile Excellence: Fully responsive layouts optimized for touch interactions and smaller screens.
 
 Summary:
-This project is a production-ready e-commerce engine. It uses a scalable backend that can handle thousands of products and a frontend optimized for mobile-first users. By using Supabase and Stripe, we ensure that user data and money are handled with the highest level of security.
+The project is now a production-grade e-commerce engine. By moving database logic to the backend and introducing an admin suite, we've created a scalable system ready for real-world traffic. The addition of Google OAuth and the Nuna branding further polishes the professional identity of Renu's Natural Haven.
