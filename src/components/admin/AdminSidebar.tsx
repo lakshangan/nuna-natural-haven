@@ -10,6 +10,7 @@ import {
     ChevronRight,
     Leaf
 } from 'lucide-react';
+import nunalogo from '@/assets/nunalogo.png';
 
 export const AdminSidebar = () => {
     const navItems = [
@@ -27,11 +28,14 @@ export const AdminSidebar = () => {
 
     return (
         <aside className="hidden lg:flex flex-col w-72 bg-emerald-950 text-emerald-50 h-full shadow-2xl z-10 transition-all duration-300">
-            <div className="p-8 flex items-center gap-3">
-                <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
-                    <Leaf className="w-6 h-6 text-white" />
-                </div>
-                <h1 className="font-heading text-xl font-bold tracking-tight">Renu Admin</h1>
+            <div className="p-8 pb-4">
+                <NavLink to="/admin/dashboard" className="flex items-center">
+                    <img
+                        src={nunalogo}
+                        alt="Renu Admin Logo"
+                        className="h-10 w-auto object-contain brightness-0 invert"
+                    />
+                </NavLink>
             </div>
 
             <nav className="flex-1 px-4 py-6 space-y-2">

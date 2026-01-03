@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { CartSheet } from "./CartSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { User, LogOut, Leaf } from "lucide-react";
+import nunalogo from "@/assets/nunalogo.png";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -45,13 +46,12 @@ export const Navbar = () => {
     >
       <div className="container mx-auto px-6 h-full flex items-center justify-between max-w-[1180px]">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="p-1.5 bg-primary rounded-lg group-hover:bg-accent transition-colors">
-            <Leaf className="h-6 w-6 text-white" />
-          </div>
-          <span className="font-heading text-xl font-bold tracking-tight text-primary">
-            RENU'S <span className="text-accent">NATURAL</span>
-          </span>
+        <Link to="/" className="flex items-center group">
+          <img
+            src={nunalogo}
+            alt="Renu's Natural Logo"
+            className="h-10 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop Navigation - Modern Pill Style */}

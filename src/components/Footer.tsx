@@ -1,4 +1,6 @@
 import { Instagram, Facebook, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import nunalogo from "@/assets/nunalogo.png";
 
 const footerLinks = {
   shop: [
@@ -34,9 +36,13 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="font-heading text-2xl font-bold">
-              RENU'S <span className="text-accent">NATURAL HAVEN</span>
-            </h3>
+            <Link to="/" className="inline-block">
+              <img
+                src={nunalogo}
+                alt="Renu's Natural Logo"
+                className="h-16 w-auto object-contain brightness-0 invert"
+              />
+            </Link>
             <p className="text-sm text-warm-cream/80 leading-relaxed">
               Handcrafted herbal remedies for those who seek the best that
               nature has to offer.

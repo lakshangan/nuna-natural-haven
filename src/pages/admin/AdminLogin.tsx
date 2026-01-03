@@ -3,6 +3,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { Leaf, ShieldCheck, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import nunalogo from '@/assets/nunalogo.png';
 
 export const AdminLogin = () => {
     const navigate = useNavigate();
@@ -43,8 +44,12 @@ export const AdminLogin = () => {
 
             <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-[40px] shadow-2xl relative z-10 animate-reveal">
                 <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-emerald-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/20 mb-8 rotate-3">
-                        <Leaf className="w-10 h-10 text-white" />
+                    <div className="mb-8 p-4 bg-white/10 rounded-[32px] backdrop-blur-md border border-white/10 shadow-2xl">
+                        <img
+                            src={nunalogo}
+                            alt="Admin Logo"
+                            className="h-20 w-auto object-contain brightness-0 invert"
+                        />
                     </div>
 
                     <h1 className="text-3xl font-heading font-bold text-white mb-2">Admin Portal</h1>
