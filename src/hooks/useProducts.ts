@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { BACKEND_URL } from '../lib/api-config';
 
 export interface Product {
     id: string;
@@ -11,7 +12,8 @@ export interface Product {
     image_url: string;
 }
 
-const BACKEND_URL = 'http://localhost:5050';
+
+
 
 export const useProducts = () => {
     return useQuery({

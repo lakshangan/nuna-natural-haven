@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { BACKEND_URL } from '../../lib/api-config';
 import {
     TrendingUp,
     TrendingDown,
@@ -52,7 +53,7 @@ export const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5050/api/admin/stats', {
+            const response = await fetch(`${BACKEND_URL}/api/admin/stats`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -70,7 +71,6 @@ export const AdminDashboard = () => {
         { label: 'Customers', value: realStats.totalUsers.toString(), change: '+14.1%', icon: Users, color: 'purple' },
         { label: 'Products', value: realStats.totalProducts.toString(), change: '+2', icon: Package, color: 'orange' },
     ];
-
     return (
         <div className="space-y-8 animate-reveal">
             <div className="flex justify-between items-end">

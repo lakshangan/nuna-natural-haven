@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ShoppingBag, Search, Eye, Package, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { BACKEND_URL } from '../../lib/api-config';
 
 export const AdminOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
@@ -14,7 +15,7 @@ export const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5050/api/admin/orders', {
+            const response = await fetch(`${BACKEND_URL}/api/admin/orders`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Leaf, ShieldCheck, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import nunalogo from '@/assets/nunalogo.png';
+import { BACKEND_URL } from '../../lib/api-config';
 
 export const AdminLogin = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const AdminLogin = () => {
     const handleGoogleSuccess = async (credentialResponse: any) => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5050/api/admin/auth/google', {
+            const response = await fetch(`${BACKEND_URL}/api/admin/auth/google`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ idToken: credentialResponse.credential }),

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Search, Mail, Phone, Calendar, MoreVertical, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { BACKEND_URL } from '../../lib/api-config';
 
 export const AdminCustomers = () => {
     const [customers, setCustomers] = useState<any[]>([]);
@@ -14,7 +15,7 @@ export const AdminCustomers = () => {
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('http://localhost:5050/api/admin/customers', {
+            const response = await fetch(`${BACKEND_URL}/api/admin/customers`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();

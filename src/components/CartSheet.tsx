@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { BACKEND_URL } from "@/lib/api-config";
 
 export const CartSheet = () => {
     const { cart, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
@@ -21,7 +22,7 @@ export const CartSheet = () => {
             toast.loading("Preparing your secure checkout...");
 
             // In a real app, we send this to our backend
-            const response = await fetch("http://localhost:5050/api/orders/checkout", {
+            const response = await fetch(`${BACKEND_URL}/api/orders/checkout`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

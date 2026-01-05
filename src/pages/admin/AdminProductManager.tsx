@@ -12,6 +12,7 @@ import {
     X
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { BACKEND_URL } from '../../lib/api-config';
 
 export const AdminProductManager = () => {
     const [products, setProducts] = useState<any[]>([]);
@@ -36,7 +37,7 @@ export const AdminProductManager = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:5050/api/products');
+            const response = await fetch(`${BACKEND_URL}/api/products`);
             const data = await response.json();
             setProducts(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -62,8 +63,8 @@ export const AdminProductManager = () => {
 
         try {
             const url = editingProduct
-                ? `http://localhost:5050/api/products/${editingProduct.id}`
-                : 'http://localhost:5050/api/products';
+                ? `${BACKEND_URL}/api/products/${editingProduct.id}`
+                : `${BACKEND_URL}/api/products`;
 
             const method = editingProduct ? 'PUT' : 'POST';
 
@@ -100,7 +101,7 @@ export const AdminProductManager = () => {
 
         const token = localStorage.getItem('adminToken');
         try {
-            const response = await fetch(`http://localhost:5050/api/products/${id}`, {
+            const response = await fetch(`${BACKEND_URL}/api/products/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
