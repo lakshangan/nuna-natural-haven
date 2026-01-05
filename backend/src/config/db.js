@@ -11,4 +11,4 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-console.log(" Backend connected to Supabase Database");
+console.log("Backend connected to Supabase Database");
