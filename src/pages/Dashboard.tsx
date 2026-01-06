@@ -108,7 +108,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text-center md:text-left transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
                             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-2">
-                                {user.profile?.full_name || 'Botanical Explorer'}
+                                {user.profile?.full_name ? `Welcome back, ${user.profile.full_name}` : 'Hello, Botanical Explorer'}
                             </h1>
                             <div className="flex flex-wrap justify-center md:justify-start gap-4 text-emerald-100/80">
                                 <span className="flex items-center gap-1.5 bg-emerald-800/40 px-3 py-1 rounded-full text-sm backdrop-blur-sm border border-white/10 italic">
@@ -260,16 +260,13 @@ const Dashboard = () => {
                                                         <p className="text-xs text-slate-500">{new Date(order.created_at).toLocaleDateString()} • {order.items?.length || 0} items</p>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center justify-between sm:justify-end gap-6">
-                                                    <div className="text-right sm:text-right">
+                                                <div className="flex items-center justify-between sm:justify-end gap-6 text-right">
+                                                    <div>
                                                         <p className="font-bold text-primary text-lg">₹{order.total || order.total_amount}</p>
                                                         <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${order.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                                                             {order.status}
                                                         </span>
                                                     </div>
-                                                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-primary">
-                                                        <ExternalLink className="w-5 h-5" />
-                                                    </Button>
                                                 </div>
                                             </div>
                                         ))}
@@ -290,16 +287,10 @@ const Dashboard = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <Button className="w-full justify-start gap-3 bg-white/10 hover:bg-white/20 border-white/10 h-12 rounded-xl transition-all hover:translate-x-1" variant="ghost">
-                                    My Wishlist
-                                </Button>
-                                <Button className="w-full justify-start gap-3 bg-white/10 hover:bg-white/20 border-white/10 h-12 rounded-xl transition-all hover:translate-x-1" variant="ghost">
-                                    Subscription settings
-                                </Button>
                                 {user.role === 'admin' && (
                                     <Button
                                         onClick={() => navigate('/admin/dashboard')}
-                                        className="w-full justify-start gap-3 bg-accent hover:bg-accent/90 text-white h-12 rounded-xl shadow-lg shadow-accent/20 mt-4 h-14 font-bold"
+                                        className="w-full justify-start gap-3 bg-accent hover:bg-accent/90 text-white h-12 rounded-xl shadow-lg shadow-accent/20 h-14 font-bold"
                                     >
                                         <Shield className="w-5 h-5" />
                                         Manager Dashboard
@@ -307,7 +298,7 @@ const Dashboard = () => {
                                 )}
                                 <Button
                                     onClick={handleSignOut}
-                                    className="w-full justify-start gap-3 bg-red-500/10 hover:bg-red-500/20 text-red-200 h-12 rounded-xl mt-8 border border-red-500/20"
+                                    className="w-full justify-start gap-3 bg-red-500/10 hover:bg-red-500/20 text-red-200 h-12 rounded-xl mt-4 border border-red-500/20"
                                     variant="ghost"
                                 >
                                     <LogOut className="w-5 h-5" />
@@ -315,13 +306,6 @@ const Dashboard = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-
-                        <div className="p-6 bg-accent/10 rounded-3xl border border-accent/20 relative overflow-hidden group">
-                            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                            <h4 className="font-bold text-emerald-900 mb-1 relative z-10">Need Help?</h4>
-                            <p className="text-xs text-emerald-700/70 mb-4 relative z-10">Our botanical experts are here for you 24/7.</p>
-                            <Button className="w-full rounded-xl bg-white text-accent hover:bg-slate-50 shadow-sm relative z-10">Start Chat</Button>
-                        </div>
                     </div>
                 </div>
             </main>
