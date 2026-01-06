@@ -77,16 +77,19 @@ export const Navbar = () => {
 
           <CartSheet />
 
-          <CartSheet />
-
-          <Link to={user ? "/dashboard" : "/auth"}>
+          {/* User/Admin Profile Link */}
+          <Link to={user ? (user.role === 'admin' ? "/admin/dashboard" : "/dashboard") : "/auth"}>
             <Button
               variant="ghost"
               size="icon"
               className={`transition-colors ml-2 ${user ? 'text-accent' : 'hover:text-accent'}`}
-              title={user ? "Dashboard" : "Login"}
+              title={user ? (user.role === 'admin' ? "Admin Panel" : "Account Dashboard") : "Login / Register"}
             >
-              <User className="h-5 w-5" />
+              {user?.role === 'admin' ? (
+                <Leaf className="h-5 w-5" /> // Botanical themed admin icon
+              ) : (
+                <User className="h-5 w-5" />
+              )}
             </Button>
           </Link>
         </div>

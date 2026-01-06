@@ -1,4 +1,5 @@
 import { supabase } from '../config/db.js';
+import jwt from 'jsonwebtoken';
 
 export const protect = async (req, res, next) => {
     try {
@@ -12,36 +13,44 @@ export const protect = async (req, res, next) => {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
 
-        // Verify token with Supabase
+        // 1. Try verifying with Supabase first
         const { data: { user }, error } = await supabase.auth.getUser(token);
 
-        if (error || !user) {
-            console.error('Supabase Auth Error:', error?.message || 'User not found');
+        if (!error && user) {
+            console.log('User verified via Supabase:', user.email);
+
+            // Get profile
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            req.user = {
+                ...user,
+                role: profile?.role || 'user',
+                profile: profile
+            };
+            return next();
+        }
+
+        // 2. Fallback: Try verifying as a manual Admin JWT
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            // If it's a valid manual JWT, construct a user object
+            req.user = {
+                id: decoded.id,
+                email: decoded.email,
+                role: decoded.role,
+                isManual: true
+            };
+            console.log('User verified via Manual JWT:', decoded.email);
+            return next();
+        } catch (jwtErr) {
+            console.error('Auth verification failed (Supabase & Manual):', jwtErr.message);
             return res.status(401).json({ message: 'Not authorized, token invalid' });
         }
-
-        console.log('User verified:', user.email);
-
-        // Get profile to check role
-        const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-        if (profileError || !profile) {
-            console.error('Profile Fetch Error:', profileError?.message || 'Profile missing');
-            return res.status(404).json({ message: 'User profile not found' });
-        }
-
-        // Attach user and profile to request
-        req.user = {
-            ...user,
-            role: profile.role,
-            profile: profile
-        };
-
-        next();
     } catch (error) {
         console.error('Auth Middleware Exception:', error);
         res.status(401).json({ message: 'Not authorized, token failed' });

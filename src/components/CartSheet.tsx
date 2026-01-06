@@ -18,6 +18,12 @@ export const CartSheet = () => {
     const handleCheckout = async () => {
         if (cart.length === 0) return;
 
+        if (!user) {
+            toast.error("Please login or create an account to proceed with checkout.");
+            navigate("/auth");
+            return;
+        }
+
         try {
             toast.loading("Preparing your secure checkout...");
 

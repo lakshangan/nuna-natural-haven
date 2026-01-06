@@ -74,6 +74,42 @@ export const getMe = async (req, res) => {
     }
 };
 
+// @desc    Google Login/Signup for Users
+// @route   POST /api/auth/google
+// @access  Public
+export const googleLogin = async (req, res) => {
+    const { idToken } = req.body;
+
+    try {
+        // We use Supabase Auth for Google on the frontend, but if we want to do it via ID Token:
+        // For simplicity and since we have the Supabase client, we can use signInWithIdToken
+        const { data, error } = await supabase.auth.signInWithIdToken({
+            provider: 'google',
+            token: idToken,
+        });
+
+        if (error) throw error;
+
+        // Ensure profile exists
+        if (data.user) {
+            await supabase.from('profiles').upsert({
+                id: data.user.id,
+                email: data.user.email,
+                role: 'user' // Default to user
+            }, { onConflict: 'id' });
+        }
+
+        res.status(200).json({
+            success: true,
+            user: data.user,
+            session: data.session
+        });
+    } catch (error) {
+        res.status(401).json({ message: error.message });
+    }
+};
+
+
 // @desc    Update current user profile
 // @route   PUT /api/auth/me
 // @access  Private

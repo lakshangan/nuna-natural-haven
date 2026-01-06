@@ -5,6 +5,7 @@ interface AuthContextType {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     signup: (email: string, password: string) => Promise<void>;
+    loginWithGoogle: (idToken: string) => Promise<void>;
     updateProfile: (data: { full_name?: string, address?: string, phone?: string }) => Promise<void>;
     signOut: () => void;
 }
@@ -17,9 +18,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
 
-    const fetchMe = async (token: string) => {
+    const fetchMe = async (token: string, isAdminToken = false) => {
         try {
-            const response = await fetch(`${API_URL}/auth/me`, {
+            const endpoint = isAdminToken ? `${API_URL}/admin/me` : `${API_URL}/auth/me`;
+            const response = await fetch(endpoint, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -28,12 +30,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const userData = await response.json();
                 setUser(userData);
             } else {
-                localStorage.removeItem('token');
+                localStorage.removeItem(isAdminToken ? 'adminToken' : 'token');
                 setUser(null);
             }
         } catch (error) {
             console.error('Fetch me error:', error);
-            localStorage.removeItem('token');
+            localStorage.removeItem(isAdminToken ? 'adminToken' : 'token');
             setUser(null);
         } finally {
             setLoading(false);
@@ -42,8 +44,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const adminToken = localStorage.getItem('adminToken');
+
         if (token) {
-            fetchMe(token);
+            fetchMe(token, false);
+        } else if (adminToken) {
+            fetchMe(adminToken, true);
         } else {
             setLoading(false);
         }
@@ -106,13 +112,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await fetchMe(data.session.access_token);
     };
 
+    const loginWithGoogle = async (idToken: string) => {
+        const response = await fetch(`${API_URL}/auth/google`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Google Login failed');
+
+        if (data.session) {
+            localStorage.setItem('token', data.session.access_token);
+            await fetchMe(data.session.access_token);
+        }
+    };
+
     const signOut = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('adminToken');
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, signup, updateProfile, signOut }}>
+        <AuthContext.Provider value={{ user, loading, login, signup, loginWithGoogle, updateProfile, signOut }}>
             {children}
         </AuthContext.Provider>
     );

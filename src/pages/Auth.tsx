@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User as UserIcon } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -17,8 +18,21 @@ const Auth = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
-    const { login, signup } = useAuth();
+    const { login, signup, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
+
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        setLoading(true);
+        try {
+            await loginWithGoogle(credentialResponse.credential);
+            toast.success("Welcome to Renu's Natural Haven!");
+            navigate("/");
+        } catch (error: any) {
+            toast.error(error.message || "Google Sign-In failed");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -68,6 +82,26 @@ const Auth = () => {
                         <TabsContent value="login">
                             <form onSubmit={handleLogin}>
                                 <CardContent className="space-y-4">
+                                    <div className="w-full mb-6">
+                                        <GoogleLogin
+                                            onSuccess={handleGoogleSuccess}
+                                            onError={() => toast.error('Google Sign-In Failed')}
+                                            useOneTap
+                                            theme="outline"
+                                            shape="pill"
+                                            text="signin_with"
+                                            width="100%"
+                                        />
+                                    </div>
+                                    <div className="relative mb-6">
+                                        <div className="absolute inset-0 flex items-center">
+                                            <span className="w-full border-t border-slate-200"></span>
+                                        </div>
+                                        <div className="relative flex justify-center text-xs uppercase">
+                                            <span className="bg-white px-2 text-slate-500 font-bold tracking-widest">Or continue with</span>
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-2">
                                         <Label htmlFor="email">Email</Label>
                                         <div className="relative">
@@ -112,6 +146,25 @@ const Auth = () => {
                         <TabsContent value="register">
                             <form onSubmit={handleSignUp}>
                                 <CardContent className="space-y-4">
+                                    <div className="w-full mb-6">
+                                        <GoogleLogin
+                                            onSuccess={handleGoogleSuccess}
+                                            onError={() => toast.error('Google Sign-In Failed')}
+                                            theme="outline"
+                                            shape="pill"
+                                            text="signup_with"
+                                            width="100%"
+                                        />
+                                    </div>
+                                    <div className="relative mb-6">
+                                        <div className="absolute inset-0 flex items-center">
+                                            <span className="w-full border-t border-slate-200"></span>
+                                        </div>
+                                        <div className="relative flex justify-center text-xs uppercase">
+                                            <span className="bg-white px-2 text-slate-500 font-bold tracking-widest">Or continue with</span>
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-2">
                                         <Label htmlFor="name">Full Name</Label>
                                         <div className="relative">

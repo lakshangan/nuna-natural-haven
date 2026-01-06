@@ -8,16 +8,27 @@ import { useAuth } from '@/contexts/AuthContext';
 export const AdminLayout = () => {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
     useEffect(() => {
-        if (!loading && (!user || user.role !== 'admin')) {
-            navigate('/admin/login');
+        const adminToken = localStorage.getItem('adminToken');
+
+        // If we are still loading AuthContext, wait unless we already have an adminToken
+        if (!loading) {
+            if ((user && user.role === 'admin') || adminToken) {
+                setIsAuthorized(true);
+            } else {
+                navigate('/admin/login');
+            }
+        } else if (adminToken) {
+            // Even if AuthContext is loading, if we have the specific adminToken, let them in
+            setIsAuthorized(true);
         }
     }, [user, loading, navigate]);
 
-    if (loading) return <div className="h-screen w-full flex items-center justify-center bg-slate-50">Loading Admin...</div>;
+    if (loading && !isAuthorized) return <div className="h-screen w-full flex items-center justify-center bg-slate-50">Loading Admin...</div>;
 
-    if (!user || user.role !== 'admin') return null;
+    if (!isAuthorized) return null;
 
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
