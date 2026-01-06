@@ -10,29 +10,42 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User as UserIcon } from "lucide-react";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 const Auth = () => {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
+    const { login, signup } = useAuth();
     const navigate = useNavigate();
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Supabase usage removed from frontend.
-        // Backend should handle auth in a real application.
-        toast.info("Registration is currently handled by the backend. This is a frontend demo.");
-        setLoading(false);
+        try {
+            await signup(email, password);
+            toast.success("Account created successfully!");
+            navigate("/");
+        } catch (error: any) {
+            toast.error(error.message || "Signup failed");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Supabase usage removed from frontend.
-        // Backend should handle auth in a real application.
-        toast.info("Login functionality has been moved to the backend.");
-        setLoading(false);
+        try {
+            await login(email, password);
+            toast.success("Logged in successfully!");
+            navigate("/");
+        } catch (error: any) {
+            toast.error(error.message || "Login failed");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

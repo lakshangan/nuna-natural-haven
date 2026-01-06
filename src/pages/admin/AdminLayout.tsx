@@ -3,24 +3,21 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export const AdminLayout = () => {
     const navigate = useNavigate();
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const { user, loading } = useAuth();
 
     useEffect(() => {
-        const adminToken = localStorage.getItem('adminToken');
-        if (!adminToken) {
+        if (!loading && (!user || user.role !== 'admin')) {
             navigate('/admin/login');
-        } else {
-            setIsAdmin(true);
         }
-        setLoading(false);
-    }, [navigate]);
+    }, [user, loading, navigate]);
 
     if (loading) return <div className="h-screen w-full flex items-center justify-center bg-slate-50">Loading Admin...</div>;
 
-    if (!isAdmin) return null;
+    if (!user || user.role !== 'admin') return null;
 
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">

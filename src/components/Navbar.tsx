@@ -77,28 +77,18 @@ export const Navbar = () => {
 
           <CartSheet />
 
-          {user ? (
+          <CartSheet />
+
+          <Link to={user ? "/dashboard" : "/auth"}>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => signOut()}
-              className="hover:text-destructive transition-colors ml-2"
-              title="Logout"
+              className={`transition-colors ml-2 ${user ? 'text-accent' : 'hover:text-accent'}`}
+              title={user ? "Dashboard" : "Login"}
             >
-              <LogOut className="h-5 w-5" />
+              <User className="h-5 w-5" />
             </Button>
-          ) : (
-            <Link to="/auth">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:text-accent transition-colors ml-2"
-                title="Login"
-              >
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
-          )}
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -137,9 +127,27 @@ export const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            {user && (
+              <Link
+                to="/dashboard"
+                className={`text-sm font-medium uppercase tracking-wider py-3 px-4 rounded-lg transition-all duration-200 ${isActive('/dashboard') ? "bg-primary text-primary-foreground" : "text-foreground/80 hover:text-primary hover:bg-muted/50"}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+            )}
             <div className="mt-4 border-t border-border/20 pt-4">
               <CartSheet />
             </div>
+            {!user && (
+              <Link
+                to="/auth"
+                className="mt-2 text-sm font-bold text-accent text-center py-3 bg-accent/10 rounded-xl"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Login / Register
+              </Link>
+            )}
           </div>
         </div>
       )}

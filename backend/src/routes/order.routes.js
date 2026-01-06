@@ -1,8 +1,26 @@
 import express from 'express';
 import { sendOrderConfirmationEmail } from '../services/email.service.js';
 import { supabase } from '../config/db.js';
+import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
+
+// @desc    Get logged in user orders
+// @route   GET /api/orders/my-orders
+router.get('/my-orders', protect, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('customer_email', req.user.email) // Linking by email for now as per schema
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // @desc    Create a Stripe Checkout Session
 // @route   POST /api/orders/checkout
@@ -11,13 +29,12 @@ router.post('/checkout', async (req, res) => {
         const { items, total, email } = req.body;
 
         // 1. Persist Order to Supabase
-        // We use total_amount to satisfy original schema AND total for our new dashboard
         const { data: order, error: orderError } = await supabase
             .from('orders')
             .insert([{
                 items,
                 total,
-                total_amount: total, // For original schema compatibility
+                total_amount: total,
                 customer_email: email,
                 status: 'pending'
             }])

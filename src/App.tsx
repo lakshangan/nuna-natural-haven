@@ -11,6 +11,7 @@ import Ingredients from "./pages/Ingredients";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 import { CartProvider } from "./contexts/CartContext";
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="/ingredients" element={<Ingredients />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/checkout-success" element={<CheckoutSuccess />} />
 
                 {/* Admin Routes */}

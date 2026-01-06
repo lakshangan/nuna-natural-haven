@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import productRoutes from './routes/product.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import orderRoutes from './routes/order.routes.js';
+import authRoutes from './routes/auth.routes.js';
 import { ENV } from './config/env.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,13 +24,14 @@ app.use(express.json());
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/auth', authRoutes);
 
 // Serve Static Files
 const distPath = path.join(__dirname, '../../dist');
 app.use(express.static(distPath));
 
 // Fallback to index.html for React Router
-app.get('*', (req, res) => {
+app.get('/*any', (req, res) => {
     // Check if it's an API route that wasn't matched
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ message: 'API route not found' });
