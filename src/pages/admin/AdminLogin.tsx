@@ -80,7 +80,7 @@ export const AdminLogin = () => {
                         </div>
 
                         <p className="text-[10px] text-emerald-500/40 uppercase font-bold tracking-[0.2em] mt-8">
-                            © 2026 RENU'S NATURAL HAVEN
+                            © 2026 NUNA ORIGIN
                         </p>
                     </div>
                 </div>

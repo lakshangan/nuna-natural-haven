@@ -1,8 +1,8 @@
-🌿 Project Report: Renu's Natural Haven
+🌿 Project Report: Nuna Origin
 Modern E-Commerce for Organic & Natural Wellness
 
 1. Project Overview
-Renu's Natural Haven is a high-end, responsive e-commerce platform dedicated to organic skincare and wellness products. The project has evolved into a robust full-stack application with a "Nature-First" aesthetic, combining premium UI design with a secure, decoupled architecture.
+Nuna Origin is a high-end, responsive e-commerce platform dedicated to organic skincare and wellness products. The project has evolved into a robust full-stack application with a "Nature-First" aesthetic, combining premium UI design with a secure, decoupled architecture.
 
 2. Updated Technical Stack
 The project now follows a professional decoupled architecture (Frontend and Backend separated), ensuring scalability and security.
@@ -70,4 +70,4 @@ Shopping Experience:
 - Mobile Excellence: Fully responsive layouts optimized for touch interactions and smaller screens.
 
 Summary:
-The project is now a production-grade e-commerce engine. By moving database logic to the backend and introducing an admin suite, we've created a scalable system ready for real-world traffic. The addition of Google OAuth and the Nuna branding further polishes the professional identity of Renu's Natural Haven.
+The project is now a production-grade e-commerce engine. By moving database logic to the backend and introducing an admin suite, we've created a scalable system ready for real-world traffic. The addition of Google OAuth and the Nuna branding further polishes the professional identity of Nuna Origin.

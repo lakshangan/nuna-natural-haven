@@ -5,7 +5,7 @@ To make your database work, follow these simple steps:
 ### 1. Create a Supabase Project
 1. Go to [supabase.com](https://supabase.com) and sign in.
 2. Click **"New Project"**.
-3. Name it `Renu Anni` (or whatever you like).
+3. Name it `Nuna Origin` (or whatever you like).
 4. Save your **Database Password** somewhere safe!
 
 ### 2. Get your API Keys

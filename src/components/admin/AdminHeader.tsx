@@ -8,7 +8,7 @@ export const AdminHeader = () => {
                 <button className="p-2 hover:bg-emerald-50 rounded-lg text-emerald-900">
                     <Menu className="w-6 h-6" />
                 </button>
-                <h1 className="font-heading text-lg font-bold">Renu Admin</h1>
+                <h1 className="font-heading text-lg font-bold">Nuna Origin Admin</h1>
             </div>
 
             <div className="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-100 w-96 group focus-within:border-emerald-500/50 transition-all">

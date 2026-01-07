@@ -25,7 +25,7 @@ const Auth = () => {
         setLoading(true);
         try {
             await loginWithGoogle(credentialResponse.credential);
-            toast.success("Welcome to Renu's Natural Haven!");
+            toast.success("Welcome to Back!");
             navigate("/");
         } catch (error: any) {
             toast.error(error.message || "Google Sign-In failed");
@@ -71,7 +71,7 @@ const Auth = () => {
                         <CardHeader className="text-center space-y-1">
                             <CardTitle className="text-3xl font-heading font-bold text-primary">Account</CardTitle>
                             <CardDescription>
-                                Join the Renu family for a personalized botanical experience
+                                Join the Nuna Origin family for a personalized botanical experience
                             </CardDescription>
                             <TabsList className="grid w-full grid-cols-2 mt-4 bg-muted/50 p-1">
                                 <TabsTrigger value="login" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Login</TabsTrigger>
@@ -171,7 +171,7 @@ const Auth = () => {
                                             <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 id="name"
-                                                placeholder="Jane Doe"
+                                                placeholder="Your name please"
                                                 className="pl-10"
                                                 value={fullName}
                                                 onChange={(e) => setFullName(e.target.value)}

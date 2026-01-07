@@ -76,7 +76,7 @@ export const AdminDashboard = () => {
             <div className="flex justify-between items-end">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Dashboard Overview</h1>
-                    <p className="text-slate-500 text-sm mt-1">Welcome back, here's what's happening with Renu's Natural Haven today.</p>
+                    <p className="text-slate-500 text-sm mt-1">Welcome back, here's what's happening with Nuna Origin today.</p>
                 </div>
                 <div className="text-right">
                     <p className="text-lg font-bold text-emerald-600 font-mono">

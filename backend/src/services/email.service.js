@@ -17,13 +17,13 @@ export const sendOrderConfirmationEmail = async (email, orderDetails) => {
         `).join('');
 
         const { data, error } = await resend.emails.send({
-            from: "Renu's Natural Haven <orders@renunatural.com>",
+            from: "Nuna Origin <orders@nunaorigin.com>",
             to: [email],
             subject: `Order Confirmation - #${orderNumber}`,
             html: `
                 <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px; color: #333;">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #2D5A27; margin: 0;">🌿 Renu's Natural Haven</h1>
+                        <h1 style="color: #2D5A27; margin: 0;">🌿 Nuna Origin</h1>
                         <p style="color: #666; font-size: 14px;">Pure Botanical Remedies</p>
                     </div>
                     
@@ -42,8 +42,8 @@ export const sendOrderConfirmationEmail = async (email, orderDetails) => {
                     <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
                     
                     <div style="text-align: center; font-size: 12px; color: #999;">
-                        <p>© 2026 Renu's Natural Haven. All rights reserved.</p>
-                        <p>Need help? Contact us at support@renunatural.com</p>
+                        <p>© 2026 Nuna Origin. All rights reserved.</p>
+                        <p>Need help? Contact us at support@nunaorigin.com</p>
                     </div>
                 </div>
             `,

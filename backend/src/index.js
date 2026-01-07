@@ -3,6 +3,9 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import productRoutes from './routes/product.routes.js';
@@ -17,6 +20,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP for easier SPA integration, or configure properly
+}));
+app.use(compression());
+app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 

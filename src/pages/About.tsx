@@ -66,7 +66,7 @@ const About = () => {
                   Rooted in Tradition, Crafted for Today
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  RENU's Nature World began in a small garden, where founder Renu discovered
+                  Nuna Origin began in a small garden, where founder of Nuna Origin discovered
                   the transformative power of herbs passed down through generations. What
                   started as creating remedies for family and friends grew into a mission to
                   share nature's gifts with everyone seeking authentic, effective self-care.

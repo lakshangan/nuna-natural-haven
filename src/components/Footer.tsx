@@ -39,7 +39,7 @@ export const Footer = () => {
             <Link to="/" className="inline-block">
               <img
                 src={nunalogo}
-                alt="Renu's Natural Logo"
+                alt="Nuna Origin Logo"
                 className="h-16 w-auto object-contain brightness-0 invert"
               />
             </Link>
@@ -120,7 +120,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-warm-cream/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-warm-cream/60">
-            © {new Date().getFullYear()} RENU's Nature World. All rights
+            © {new Date().getFullYear()} Nuna Origin. All rights
             reserved.
           </p>
           <div className="flex gap-6">

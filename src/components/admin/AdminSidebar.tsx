@@ -32,7 +32,7 @@ export const AdminSidebar = () => {
                 <NavLink to="/admin/dashboard" className="flex items-center">
                     <img
                         src={nunalogo}
-                        alt="Renu Admin Logo"
+                        alt="Nuna Origin Admin Logo"
                         className="h-10 w-auto object-contain brightness-0 invert"
                     />
                 </NavLink>

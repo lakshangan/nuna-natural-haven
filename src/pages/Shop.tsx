@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
-import { useProducts } from "@/hooks/useProducts";
+import { useQueryClient } from "@tanstack/react-query";
+import { useProducts, fetchProductBySlug } from "@/hooks/useProducts";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import product1 from "@/assets/product-1.jpg";
@@ -47,7 +48,16 @@ const products = [
 
 const Shop = () => {
   const { addItem } = useCart();
+  const queryClient = useQueryClient();
   const { data: dbProducts, isLoading, error } = useProducts();
+
+  const prefetchProduct = (slug: string) => {
+    queryClient.prefetchQuery({
+      queryKey: ['product', slug],
+      queryFn: () => fetchProductBySlug(slug),
+      staleTime: 1000 * 60 * 5,
+    });
+  };
 
   // Combine DB products with static ones or use static as fallback
   const displayProducts = dbProducts && dbProducts.length > 0 ? dbProducts : products;
@@ -106,6 +116,7 @@ const Shop = () => {
                 <Link
                   key={product.id}
                   to={`/product/${product.slug}`}
+                  onMouseEnter={() => prefetchProduct(product.slug)}
                   className="group bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 animate-reveal"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >

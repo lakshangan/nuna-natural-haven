@@ -1,4 +1,4 @@
-# 🌿 Renu's Natural Haven: File Architecture & Logic Guide
+# 🌿 Nuna Origin: File Architecture & Logic Guide
 
 This document provides a crisp breakdown of the project structure, explaining the responsibility and logic behind every key directory and file.
 

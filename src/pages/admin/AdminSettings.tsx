@@ -4,8 +4,8 @@ import { toast } from 'sonner';
 
 export const AdminSettings = () => {
     const [config, setConfig] = useState({
-        storeName: "Renu's Natural Haven",
-        supportEmail: "support@renunatural.com",
+        storeName: "Nuna Origin",
+        supportEmail: "support@nunaorigin.com",
         orderPrefix: "ORD-",
         currency: "INR",
         enableEmails: true,

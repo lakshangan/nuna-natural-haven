@@ -15,6 +15,16 @@ export interface Product {
 
 
 
+export const fetchProductBySlug = async (slug: string) => {
+    if (!slug) return null;
+    const response = await fetch(`${BACKEND_URL}/api/products/${slug}`);
+    if (!response.ok) {
+        if (response.status === 404) return null;
+        throw new Error('Network response was not ok');
+    }
+    return response.json() as Promise<Product>;
+};
+
 export const useProducts = () => {
     return useQuery({
         queryKey: ['products'],
@@ -31,15 +41,7 @@ export const useProducts = () => {
 export const useProduct = (slug: string) => {
     return useQuery({
         queryKey: ['product', slug],
-        queryFn: async () => {
-            if (!slug) return null;
-            const response = await fetch(`${BACKEND_URL}/api/products/${slug}`);
-            if (!response.ok) {
-                if (response.status === 404) return null;
-                throw new Error('Network response was not ok');
-            }
-            return response.json() as Promise<Product>;
-        },
+        queryFn: () => fetchProductBySlug(slug),
         enabled: !!slug,
     });
 };

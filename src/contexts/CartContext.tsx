@@ -24,13 +24,13 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
     // Load cart from local storage on initial load
-    const savedCart = localStorage.getItem('renu-cart');
+    const savedCart = localStorage.getItem('nuna-cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
   useEffect(() => {
     // Save cart to local storage whenever it changes
-    localStorage.setItem('renu-cart', JSON.stringify(cart));
+    localStorage.setItem('nuna-cart', JSON.stringify(cart));
   }, [cart]);
 
   const addItem = (item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
