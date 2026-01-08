@@ -48,8 +48,12 @@ app.get('/*any', (req, res) => {
 });
 
 // Start Server
-const PORT = ENV.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📂 Serving frontend from: ${distPath}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = ENV.PORT || 5000;
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📂 Serving frontend from: ${distPath}`);
+    });
+}
+
+export default app;
