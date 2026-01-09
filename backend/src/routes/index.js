@@ -6,16 +6,8 @@ import authRoutes from './auth.routes.js';
 
 const router = express.Router();
 
-// Health check / API root
-router.get('/', (req, res) => {
-    res.json({
-        status: 'success',
-        message: 'Renu\'s Natural Haven API is active',
-        version: '1.0.0'
-    });
-});
-
 // Mounted routes
+
 router.use('/products', productRoutes);
 router.use('/admin', adminRoutes);
 router.use('/orders', orderRoutes);

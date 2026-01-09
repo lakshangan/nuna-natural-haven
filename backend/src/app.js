@@ -19,10 +19,18 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
+// Health Check Routes
+app.get('/', (req, res) => {
+    res.json({ status: 'Backend is running 🚀' });
+});
+
+app.get('/api', (req, res) => {
+    res.json({ status: 'API is live 🚀' });
+});
+
 // Mount API Router
-// This mounts all routes in apiRouter under the /api prefix.
-// The router itself handles the /api root and unknown /api/* routes.
 app.use('/api', apiRouter);
+
 
 // Global Error Handler (Optional but recommended)
 app.use((err, req, res, next) => {
