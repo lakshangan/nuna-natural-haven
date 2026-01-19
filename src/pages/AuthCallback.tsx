@@ -11,80 +11,39 @@ const AuthCallback = () => {
     useEffect(() => {
         const handleAuthCallback = async () => {
             try {
-                // 1. Manually Extract Token from Hash
-                // Supabase redirects to /auth/callback#access_token=...
-                const hashParams = new URLSearchParams(window.location.hash.substring(1));
-                const accessToken = hashParams.get("access_token");
-                const refreshToken = hashParams.get("refresh_token");
+                // Standard Supabase Session Recovery
+                // The library automatically detects the hash fragment
+                const { data, error } = await supabase.auth.getSession();
 
-                if (accessToken) {
-                    console.log("Token found in hash. Verifying directly...");
+                if (error) throw error;
 
-                    // 2. Verify validity by fetching the user
-                    // This bypasses 'getSession' issues by directly asking "Is this token valid?"
-                    const { data, error } = await supabase.auth.getUser(accessToken);
-
-                    if (error) {
-                        console.error("Token verification failed:", error);
-                        // If verification fails, we fall through to other methods or error out
-                    } else if (data.user) {
-                        console.log("User verified:", data.user.email);
-
-                        // 3. Login Successful - Set Token manually
-                        await handleToken(accessToken);
-
-                        // Optional: Save refresh token if available
-                        if (refreshToken) {
-                            localStorage.setItem("refresh_token", refreshToken);
-                        }
-
-                        // Force session set (best effort) to sync client state
-                        supabase.auth.setSession({
-                            access_token: accessToken,
-                            refresh_token: refreshToken || ""
-                        }).catch(() => { });
-
-                        toast.success(`Welcome back!`);
-                        navigate("/dashboard");
-                        return;
-                    }
-                }
-
-                // 3. Fallback: Check if Supabase already has a session
-                // (e.g. if we navigated here with a session cookie)
-                const { data } = await supabase.auth.getSession();
                 if (data.session) {
-                    console.log("Existing session found");
                     await handleToken(data.session.access_token);
-                    navigate("/dashboard");
-                    return;
-                }
-
-                // 4. Fallback for Error params in URL
-                const queryParams = new URLSearchParams(window.location.search);
-                const errorDescription = queryParams.get("error_description");
-                if (errorDescription) {
-                    toast.error(errorDescription);
-                    navigate("/auth");
-                    return;
-                }
-
-                // 5. If truly nothing found
-                console.warn("No authentication data found in URL.");
-                // wait brief moment to ensure we didn't miss a race condition, then redirect
-                setTimeout(() => {
-                    if (localStorage.getItem("token")) {
-                        navigate("/dashboard");
-                    } else {
-                        // Only redirect to auth if we are truly sure we failed
-                        console.log("Redirecting to login...");
-                        navigate("/auth");
+                    if (data.session.refresh_token) {
+                        localStorage.setItem("refresh_token", data.session.refresh_token);
                     }
-                }, 1500);
-
+                    toast.success("Successfully logged in!");
+                    navigate("/dashboard");
+                } else {
+                    // If no session found immediately, check local storage or redirect
+                    // Wait a brief moment to handle any race conditions in the library
+                    setTimeout(() => {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            navigate("/dashboard");
+                        } else {
+                            // If we are still here and have no session, likely an error or cancelled login
+                            // Only redirect if we effectively have no state
+                            const hash = window.location.hash;
+                            if (!hash || hash.length < 10) {
+                                navigate("/auth");
+                            }
+                        }
+                    }, 1000);
+                }
             } catch (err: any) {
                 console.error("Auth callback error:", err);
-                toast.error("Authentication failed. Please try again.");
+                toast.error(`Login failed: ${err.message}`);
                 navigate("/auth");
             }
         };
