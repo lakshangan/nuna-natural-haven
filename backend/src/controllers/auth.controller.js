@@ -81,8 +81,6 @@ export const googleLogin = async (req, res) => {
     const { idToken } = req.body;
 
     try {
-        // We use Supabase Auth for Google on the frontend, but if we want to do it via ID Token:
-        // For simplicity and since we have the Supabase client, we can use signInWithIdToken
         const { data, error } = await supabase.auth.signInWithIdToken({
             provider: 'google',
             token: idToken,
@@ -90,12 +88,11 @@ export const googleLogin = async (req, res) => {
 
         if (error) throw error;
 
-        // Ensure profile exists
         if (data.user) {
             await supabase.from('profiles').upsert({
                 id: data.user.id,
                 email: data.user.email,
-                role: 'user' // Default to user
+                role: 'user'
             }, { onConflict: 'id' });
         }
 
@@ -108,6 +105,36 @@ export const googleLogin = async (req, res) => {
         res.status(401).json({ message: error.message });
     }
 };
+
+// @desc    Redirect to Google OAuth
+// @route   GET /api/auth/google
+// @access  Public
+export const googleRedirect = async (req, res) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const redirectUrl = `${frontendUrl}/auth/callback`;
+
+        console.log('Google Auth Redirecting to:', redirectUrl);
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: redirectUrl,
+            },
+        });
+
+        if (error) throw error;
+        if (data?.url) {
+            res.redirect(data.url);
+        } else {
+            throw new Error('No redirect URL provided by Supabase');
+        }
+    } catch (error) {
+        console.error('Google Redirect Error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 // @desc    Update current user profile

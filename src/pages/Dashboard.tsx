@@ -15,6 +15,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { API_URL } from "@/lib/api-config";
+
 
 const Dashboard = () => {
     const { user, loading, signOut, updateProfile } = useAuth();
@@ -29,7 +31,7 @@ const Dashboard = () => {
     const [updating, setUpdating] = useState(false);
     const navigate = useNavigate();
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+
 
     useEffect(() => {
         if (user) {

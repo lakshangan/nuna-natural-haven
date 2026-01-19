@@ -76,7 +76,7 @@ export const AdminLogin = () => {
                                     theme="filled_black"
                                     shape="pill"
                                     text="continue_with"
-                                    width="100%"
+                                    width="300"
                                 />
                             </div>
 
