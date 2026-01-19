@@ -14,6 +14,8 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
+    'https://renu-s-natural-haven.vercel.app',
+    'https://nunaorganic.vercel.app',
     process.env.FRONTEND_URL,
 ].filter(Boolean);
 

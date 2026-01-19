@@ -12,38 +12,37 @@ const AuthCallback = () => {
         const handleAuthCallback = async () => {
             try {
                 // Standard Supabase Session Recovery
-                // The library automatically detects the hash fragment
                 const { data, error } = await supabase.auth.getSession();
 
                 if (error) throw error;
 
                 if (data.session) {
                     await handleToken(data.session.access_token);
+                    // Persist refresh token if available for smoother re-auth
                     if (data.session.refresh_token) {
                         localStorage.setItem("refresh_token", data.session.refresh_token);
                     }
                     toast.success("Successfully logged in!");
                     navigate("/dashboard");
                 } else {
-                    // If no session found immediately, check local storage or redirect
-                    // Wait a brief moment to handle any race conditions in the library
+                    // Graceful Fallback: Wait briefly for internal state or redirect
                     setTimeout(() => {
                         const token = localStorage.getItem("token");
                         if (token) {
                             navigate("/dashboard");
                         } else {
-                            // If we are still here and have no session, likely an error or cancelled login
-                            // Only redirect if we effectively have no state
+                            // If no session is found, check if we are stuck in a hash fragment
                             const hash = window.location.hash;
                             if (!hash || hash.length < 10) {
+                                // Only redirect to auth if we clearly failed
                                 navigate("/auth");
                             }
                         }
                     }, 1000);
                 }
             } catch (err: any) {
-                console.error("Auth callback error:", err);
-                toast.error(`Login failed: ${err.message}`);
+                console.error("Auth callback error:", err.message);
+                toast.error(`Login failed: Please try again.`);
                 navigate("/auth");
             }
         };
