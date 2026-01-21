@@ -19,12 +19,34 @@ export const protect = async (req, res, next) => {
         if (!error && user) {
             console.log('User verified via Supabase:', user.email);
 
-            // Get profile
-            const { data: profile } = await supabase
+            // Get profile or create if missing
+            let { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', user.id)
                 .single();
+
+            // If profile is missing OR missing basic info like full_name (common for first-time Google logins)
+            if (profileError || !profile || (!profile.full_name && user.user_metadata?.full_name)) {
+                console.log('Syncing profile for:', user.email);
+                const { data: newProfile, error: upsertError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: user.id,
+                        email: user.email,
+                        full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
+                        avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
+                        role: profile?.role || 'user', // Preserve role if it exists
+                    }, { onConflict: 'id' })
+                    .select()
+                    .single();
+
+                if (!upsertError) {
+                    profile = newProfile;
+                } else {
+                    console.error('Profile sync error:', upsertError.message);
+                }
+            }
 
             req.user = {
                 ...user,

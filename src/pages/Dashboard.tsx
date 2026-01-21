@@ -26,7 +26,9 @@ const Dashboard = () => {
     const [editData, setEditData] = useState({
         full_name: "",
         phone: "",
-        address: ""
+        address: "",
+        birthday: "",
+        gender: ""
     });
     const [updating, setUpdating] = useState(false);
     const navigate = useNavigate();
@@ -38,7 +40,9 @@ const Dashboard = () => {
             setEditData({
                 full_name: user.profile?.full_name || "",
                 phone: user.profile?.phone || "",
-                address: user.profile?.address || ""
+                address: user.profile?.address || "",
+                birthday: user.profile?.birthday || "",
+                gender: user.profile?.gender || ""
             });
             fetchOrders();
         }
@@ -105,8 +109,12 @@ const Dashboard = () => {
 
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
-                        <div className="w-32 h-32 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-5xl font-bold shadow-2xl">
-                            {user.email?.[0].toUpperCase()}
+                        <div className="w-32 h-32 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden shadow-2xl">
+                            {user.profile?.avatar_url ? (
+                                <img src={user.profile.avatar_url} alt={user.profile.full_name || 'Profile'} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-5xl font-bold">{user.profile?.full_name?.[0].toUpperCase() || user.email?.[0].toUpperCase()}</span>
+                            )}
                         </div>
                         <div className="text-center md:text-left transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
                             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-2">
@@ -182,6 +190,32 @@ const Dashboard = () => {
                                                         className="min-h-[100px]"
                                                     />
                                                 </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="birthday">Birthday</Label>
+                                                        <Input
+                                                            id="birthday"
+                                                            type="date"
+                                                            value={editData.birthday}
+                                                            onChange={(e) => setEditData({ ...editData, birthday: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="gender">Gender</Label>
+                                                        <select
+                                                            id="gender"
+                                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                            value={editData.gender}
+                                                            onChange={(e) => setEditData({ ...editData, gender: e.target.value })}
+                                                        >
+                                                            <option value="">Select...</option>
+                                                            <option value="male">Male</option>
+                                                            <option value="female">Female</option>
+                                                            <option value="non-binary">Non-binary</option>
+                                                            <option value="prefer-not-to-say">Prefer not to say</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <DialogFooter>
                                                     <Button type="submit" disabled={updating} className="w-full bg-emerald-600 hover:bg-emerald-700">
                                                         {updating ? "Saving Changes..." : "Save Changes"}
@@ -221,6 +255,28 @@ const Dashboard = () => {
                                         <div>
                                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Delivery Address</p>
                                             <p className="font-bold text-slate-800 leading-relaxed">{user.profile?.address || 'No address on file'}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 divide-x divide-slate-50">
+                                        <div className="p-6 flex items-center gap-6 hover:bg-slate-50/10 transition-colors">
+                                            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
+                                                <Calendar className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Birthday</p>
+                                                <p className="font-bold text-slate-800">{user.profile?.birthday || 'Not set'}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-6 flex items-center gap-6 hover:bg-slate-50/10 transition-colors">
+                                            <div className="w-12 h-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600">
+                                                <User className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Gender</p>
+                                                <p className="font-bold text-slate-800 capitalize">{user.profile?.gender || 'Not set'}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

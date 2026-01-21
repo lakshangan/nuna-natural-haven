@@ -47,10 +47,15 @@ create table products (
 -- 2. PROFILES TABLE (Linked to Supabase Auth)
 create table profiles (
   id uuid references auth.users on delete cascade primary key,
+  email text,
   full_name text,
+  avatar_url text,
   address text,
   phone text,
-  updated_at timestamp with time zone
+  role text default 'user',
+  birthday date,
+  gender text,
+  updated_at timestamp with time zone default now()
 );
 
 -- 3. ORDERS TABLE

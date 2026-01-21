@@ -141,12 +141,12 @@ export const googleRedirect = async (req, res) => {
 // @route   PUT /api/auth/me
 // @access  Private
 export const updateMe = async (req, res) => {
-    const { full_name, address, phone } = req.body;
+    const { full_name, address, phone, birthday, gender } = req.body;
 
     try {
         const { data, error } = await supabase
             .from('profiles')
-            .update({ full_name, address, phone })
+            .update({ full_name, address, phone, birthday, gender })
             .eq('id', req.user.id)
             .select()
             .single();

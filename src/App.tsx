@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+
 
 // Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
@@ -30,6 +32,8 @@ const AdminSettings = lazy(() => import("@/pages/admin/AdminSettings").then(m =>
 import { CartProvider } from "./contexts/CartContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { CinematicPreloader } from "./components/CinematicPreloader";
+import { useState, useEffect } from "react";
 
 // Shared Loading Component
 const PageLoading = () => (
@@ -52,48 +56,65 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={<PageLoading />}>
-              <Routes>
-                {/* User Routes */}
-                <Route path="/" element={<Index />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:slug" element={<ProductDetail />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/ingredients" element={<Ingredients />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/checkout-success" element={<CheckoutSuccess />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
+const App = () => {
+  const [showPreloader, setShowPreloader] = useState(() => {
+    // Only show preloader once per session
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('preloader_shown');
+    }
+    return true;
+  });
+
+  const handlePreloaderFinished = () => {
+    setShowPreloader(false);
+    sessionStorage.setItem('preloader_shown', 'true');
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CartProvider>
+          <TooltipProvider>
+            {showPreloader && <CinematicPreloader onFinished={handlePreloaderFinished} />}
+            <Analytics />
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<PageLoading />}>
+                <Routes>
+                  {/* User Routes */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product/:slug" element={<ProductDetail />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/ingredients" element={<Ingredients />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/checkout-success" element={<CheckoutSuccess />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
 
 
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="products" element={<AdminProductManager />} />
-                  <Route path="orders" element={<AdminOrders />} />
-                  <Route path="customers" element={<AdminCustomers />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                </Route>
+                  {/* Admin Routes */}
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="products" element={<AdminProductManager />} />
+                    <Route path="orders" element={<AdminOrders />} />
+                    <Route path="customers" element={<AdminCustomers />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
 
-                {/* Catch-all */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+                  {/* Catch-all */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </CartProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
