@@ -4,17 +4,20 @@ import nunalogo from "@/assets/nunalogo.png";
 export const CinematicPreloader = ({ onFinished }: { onFinished: () => void }) => {
     const [progress, setProgress] = useState(0);
     const [fadeOut, setFadeOut] = useState(false);
+    const [isRevealing, setIsRevealing] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(interval);
-                    setTimeout(() => setFadeOut(true), 500);
+                    setTimeout(() => setFadeOut(true), 400);
+                    setTimeout(() => setIsRevealing(true), 600);
                     setTimeout(() => onFinished(), 1200);
                     return 100;
                 }
-                return prev + 1;
+                const increment = Math.random() * 3 + 1.5;
+                return Math.min(prev + increment, 100);
             });
         }, 30);
 
@@ -23,51 +26,67 @@ export const CinematicPreloader = ({ onFinished }: { onFinished: () => void }) =
 
     return (
         <div
-            className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a1a12] transition-all duration-1000 ease-in-out ${fadeOut ? "opacity-0 invisible scale-110" : "opacity-100 visible"
+            className={`fixed inset-0 z-[9999] bg-[#fbfaf7] flex flex-col items-center justify-center transition-all duration-[2000ms] ease-[cubic-bezier(0.7,0,0.3,1)] ${fadeOut ? "opacity-0 pointer-events-none scale-105" : "opacity-100"
                 }`}
         >
-            {/* Background Texture/Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/40 to-transparent pointer-events-none" />
+            {/* Organic Texture Overlay */}
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/paper.png')]" />
 
-            <div className="relative flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-1000">
-                {/* Logo with pulsing glow */}
-                <div className="relative">
-                    <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full animate-pulse" />
-                    <img
-                        src={nunalogo}
-                        alt="Nuna Origin"
-                        className="h-24 md:h-32 w-auto object-contain relative z-10 brightness-110"
-                    />
-                </div>
-
-                {/* Typography */}
-                <div className="flex flex-col items-center gap-2">
-                    <h1 className="text-white text-2xl md:text-3xl font-heading font-light tracking-[0.3em] uppercase opacity-90">
-                        Nuna Origin
-                    </h1>
-                    <p className="text-emerald-200/50 text-xs md:text-sm tracking-[0.5em] uppercase font-medium">
-                        Purely Botanical Sanctuary
-                    </p>
-                </div>
-
-                {/* Progress bar container */}
-                <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
-                    <div
-                        className="absolute top-0 left-0 h-full bg-emerald-400/80 transition-all duration-300 ease-out"
-                        style={{ width: `${progress}%` }}
-                    />
-                    <div className="absolute inset-0 animate-shimmer opacity-50" />
-                </div>
-
-                <span className="text-white/30 text-[10px] tabular-nums tracking-widest transition-opacity duration-300">
-                    {progress}%
-                </span>
+            {/* Ambient Warmth Orbs */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[#e8f0eb] blur-[140px] rounded-full" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#fcf5e8] blur-[140px] rounded-full" />
             </div>
 
-            {/* Cinematic Overlay Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between p-8 pointer-events-none">
-                <div className="w-full h-px bg-white/5" />
-                <div className="w-full h-px bg-white/5" />
+            {/* Logo Composition */}
+            <div className={`relative flex flex-col items-center transition-all duration-[1200ms] ease-out ${fadeOut ? "blur-2xl opacity-0 translate-y-4" : "blur-0 opacity-100 translate-y-0"
+                }`}>
+                <div className="relative group p-8">
+                    {/* Soft Organic Shadow for depth */}
+                    <div
+                        className="absolute inset-0 bg-[#344d3e]/5 blur-[60px] rounded-full transition-opacity duration-1000"
+                        style={{ opacity: progress / 100 }}
+                    />
+
+                    {/* Logo - Using Multiply to blend into the paper background */}
+                    <div className="relative z-10">
+                        <img
+                            src={nunalogo}
+                            alt="Nuna Origin"
+                            className="h-28 md:h-36 w-auto object-contain transition-all duration-1000 ease-out mix-blend-multiply"
+                            style={{
+                                opacity: 0.1 + (progress / 100) * 0.9,
+                                filter: `drop-shadow(0 4px 12px rgba(52,77,62,${progress / 600}))`
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {/* Minimalist Progress Indicator */}
+                <div className="mt-12 flex flex-col items-center gap-8">
+                    {/* Ultra-soft scanning line */}
+                    <div className="w-48 h-[1px] bg-[#344d3e]/10 relative overflow-hidden rounded-full">
+                        <div
+                            className="absolute top-0 left-0 h-full bg-[#344d3e]/40 transition-all duration-300 ease-out"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+
+                    <div className="overflow-hidden h-6 flex flex-col items-center">
+                        <p className={`text-[#344d3e]/40 text-[9px] uppercase tracking-[0.6em] font-medium transition-all duration-1000 delay-300 ${isRevealing ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
+                            }`}>
+                            Harvesting Nature's Care
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Corner Precision Accents (Warm Bronze) */}
+            <div className="absolute inset-16 pointer-events-none opacity-[0.15]">
+                <div className="absolute top-0 left-0 w-8 h-[1px] bg-[#344d3e]" />
+                <div className="absolute top-0 left-0 w-[1px] h-8 bg-[#344d3e]" />
+                <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#344d3e]" />
+                <div className="absolute bottom-0 right-0 w-[1px] h-8 bg-[#344d3e]" />
             </div>
         </div>
     );

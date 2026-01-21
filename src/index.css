@@ -15,7 +15,7 @@ All colors MUST be HSL.
     --clay-brown: 24 28% 38%;
     --accent-gold: 38 49% 60%;
     --neutral-charcoal: 0 0% 17%;
-    
+
     /* Semantic tokens */
     --background: 40 33% 94%;
     --foreground: 0 0% 17%;
@@ -46,11 +46,11 @@ All colors MUST be HSL.
     --ring: 134 33% 28%;
 
     --radius: 0.5rem;
-    
+
     /* Typography */
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Inter', system-ui, sans-serif;
-    
+
     /* Animations */
     --transition-smooth: cubic-bezier(0.2, 0.9, 0.2, 1);
     --transition-base: 0.3s var(--transition-smooth);
@@ -91,29 +91,28 @@ All colors MUST be HSL.
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .animate-reveal {
     animation: reveal 0.6s var(--transition-smooth) forwards;
   }
-  
+
   @keyframes reveal {
     from {
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  
+
   .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
   }
@@ -122,8 +121,27 @@ All colors MUST be HSL.
     from {
       background-position: -200% 0;
     }
+
     to {
       background-position: 200% 0;
+    }
+  }
+
+  .animate-page-reveal {
+    animation: page-reveal 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes page-reveal {
+    from {
+      opacity: 0;
+      filter: blur(40px) brightness(0.8);
+      transform: scale(1.1);
+    }
+
+    to {
+      opacity: 1;
+      filter: blur(0) brightness(1);
+      transform: scale(1);
     }
   }
 
@@ -144,18 +162,23 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-body antialiased;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-heading);
     font-weight: 600;
   }
-  
+
   .glass {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
-  
+
   .dark .glass {
     background: rgba(43, 43, 43, 0.85);
   }

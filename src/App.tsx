@@ -58,15 +58,22 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [showPreloader, setShowPreloader] = useState(() => {
-    // Only show preloader once per session
     if (typeof window !== 'undefined') {
       return !sessionStorage.getItem('preloader_shown');
     }
     return true;
   });
 
+  const [contentRevealed, setContentRevealed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!sessionStorage.getItem('preloader_shown');
+    }
+    return false;
+  });
+
   const handlePreloaderFinished = () => {
     setShowPreloader(false);
+    setContentRevealed(true);
     sessionStorage.setItem('preloader_shown', 'true');
   };
 
@@ -76,40 +83,42 @@ const App = () => {
         <CartProvider>
           <TooltipProvider>
             {showPreloader && <CinematicPreloader onFinished={handlePreloaderFinished} />}
-            <Analytics />
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<PageLoading />}>
-                <Routes>
-                  {/* User Routes */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/shop" element={<Shop />} />
-                  <Route path="/product/:slug" element={<ProductDetail />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/ingredients" element={<Ingredients />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/checkout-success" element={<CheckoutSuccess />} />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
+            <div className={contentRevealed ? "animate-page-reveal" : "opacity-0"}>
+              <Analytics />
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Suspense fallback={<PageLoading />}>
+                  <Routes>
+                    {/* User Routes */}
+                    <Route path="/" element={<Index />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/product/:slug" element={<ProductDetail />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/ingredients" element={<Ingredients />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/checkout-success" element={<CheckoutSuccess />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
 
 
-                  {/* Admin Routes */}
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="products" element={<AdminProductManager />} />
-                    <Route path="orders" element={<AdminOrders />} />
-                    <Route path="customers" element={<AdminCustomers />} />
-                    <Route path="settings" element={<AdminSettings />} />
-                  </Route>
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin" element={<AdminLayout />}>
+                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="products" element={<AdminProductManager />} />
+                      <Route path="orders" element={<AdminOrders />} />
+                      <Route path="customers" element={<AdminCustomers />} />
+                      <Route path="settings" element={<AdminSettings />} />
+                    </Route>
 
-                  {/* Catch-all */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
+                    {/* Catch-all */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </div>
           </TooltipProvider>
         </CartProvider>
       </AuthProvider>
