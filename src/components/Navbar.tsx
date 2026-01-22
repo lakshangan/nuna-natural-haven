@@ -109,90 +109,98 @@ export const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay - OUTSIDE the restricted height nav */}
+      {/* Mobile Menu Overlay - Lower z-index so Nav (with X button) stays on top */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-white md:hidden overflow-y-auto animate-in slide-in-from-top-4 duration-500 flex flex-col pt-[72px]"
+          className="fixed inset-0 z-40 bg-white md:hidden overflow-y-auto animate-in fade-in duration-300 flex flex-col pt-[80px] pb-10"
         >
-          <div className="flex-1 container mx-auto px-8 py-10 flex flex-col gap-10">
-            <div className="space-y-6">
-              <p className="text-[11px] font-bold text-primary/40 uppercase tracking-[0.3em] px-2">Navigation</p>
-              <div className="grid gap-4">
+          <div className="container mx-auto px-6 flex flex-col gap-8">
+            {/* Navigation Section */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-bold text-primary/40 uppercase tracking-[0.3em] px-4">Menu</p>
+              <div className="grid gap-3">
                 {navLinks.map((link, index) => (
                   <Link
                     key={link.label}
                     to={link.href}
                     className={`
-                      group flex items-center justify-between py-4 px-6 rounded-[2rem]
-                      transition-all duration-500 ease-out
+                      group flex items-center justify-between py-4 px-5 rounded-2xl
+                      transition-all duration-300
                       ${isActive(link.href)
-                        ? "bg-primary text-white shadow-[0_20px_40px_-10px_rgba(var(--olive-green),0.2)]"
+                        ? "bg-primary text-white shadow-lg shadow-primary/20"
                         : "bg-muted/30 text-foreground/80 hover:bg-muted/50"
                       }
                     `}
                     style={{
-                      animation: 'reveal 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) forwards',
-                      animationDelay: `${index * 0.08}s`,
+                      animation: 'reveal 0.4s ease-out forwards',
+                      animationDelay: `${index * 0.05}s`,
                       opacity: 0
                     }}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="flex items-center gap-5">
-                      <div className={`p-3 rounded-2xl transition-colors ${isActive(link.href) ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2 rounded-xl transition-colors ${isActive(link.href) ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
                         {link.icon}
                       </div>
-                      <span className="text-lg font-semibold tracking-tight">{link.label}</span>
+                      <span className="text-base font-semibold">{link.label}</span>
                     </div>
-                    <div className={`h-2 w-2 rounded-full transition-all duration-500 ${isActive(link.href) ? 'bg-white scale-125' : 'bg-primary/20 group-hover:bg-primary/40'}`} />
+                    <div className={`h-1.5 w-1.5 rounded-full transition-all ${isActive(link.href) ? 'bg-white' : 'bg-primary/20'}`} />
                   </Link>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-6 mt-auto pb-8">
-              <p className="text-[11px] font-bold text-primary/40 uppercase tracking-[0.3em] px-2">Account Experience</p>
-              <div className="grid gap-4">
+            {/* Account Section - No longer pushed to the very bottom */}
+            <div className="space-y-4 border-t border-border/10 pt-8">
+              <p className="text-[10px] font-bold text-primary/40 uppercase tracking-[0.3em] px-4">Account & Shop</p>
+              <div className="grid gap-3">
                 {user ? (
                   <Link
                     to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"}
-                    className="flex items-center gap-5 p-6 bg-primary/5 border border-primary/10 rounded-[2rem] transition-all duration-300"
+                    className="flex items-center gap-4 p-5 bg-primary/5 border border-primary/10 rounded-2xl"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="p-4 rounded-full bg-primary text-white shadow-lg">
-                      {user.role === 'admin' ? <Leaf className="h-6 w-6" /> : <User className="h-6 w-6" />}
+                    <div className="p-3 rounded-full bg-primary text-white">
+                      {user.role === 'admin' ? <Leaf className="h-5 w-5" /> : <User className="h-5 w-5" />}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold opacity-60 uppercase tracking-tighter">Welcome back</span>
-                      <span className="text-lg font-bold text-primary">
-                        {user.role === 'admin' ? "Administrator" : "User Profile"}
+                    <div className="flex flex-col text-left">
+                      <span className="text-[10px] font-bold opacity-50 uppercase">Dashboard</span>
+                      <span className="text-base font-bold text-primary">
+                        {user.role === 'admin' ? "Admin Access" : "My Account"}
                       </span>
                     </div>
                   </Link>
                 ) : (
                   <Link
                     to="/auth"
-                    className="flex items-center justify-center gap-4 text-base font-bold uppercase tracking-widest py-6 px-8 bg-accent text-white rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(var(--accent-gold),0.4)] active:scale-95 transition-all duration-500 group"
+                    className="flex items-center justify-center gap-3 text-sm font-bold uppercase tracking-widest py-5 px-8 bg-accent text-white rounded-2xl shadow-lg shadow-accent/20 active:scale-95 transition-all group"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <User className="h-6 w-6 transition-transform group-hover:rotate-12" />
-                    Join The Family
+                    <User className="h-5 w-5" />
+                    Login / Register
                   </Link>
                 )}
 
-                <div className="bg-muted/30 border border-border/50 rounded-[2rem] p-6 flex items-center justify-between group">
-                  <div className="flex items-center gap-5">
-                    <div className="p-4 rounded-[1.25rem] bg-white shadow-sm text-primary group-hover:scale-110 transition-transform duration-500">
-                      <ShoppingCart className="h-6 w-6" />
+                <div className="bg-muted/30 border border-border/50 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="p-3 rounded-xl bg-white shadow-sm text-primary">
+                      <ShoppingCart className="h-5 w-5" />
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-lg font-bold">Your Basket</span>
-                      <span className="text-xs text-muted-foreground font-medium">Items waiting for you</span>
-                    </div>
+                    <span className="text-sm font-bold">Shopping Cart</span>
                   </div>
                   <CartSheet />
                 </div>
               </div>
             </div>
+
+            {/* Close / Back to Page button at the bottom for easy reach */}
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="mt-4 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest hover:text-primary transition-colors flex items-center justify-center gap-2"
+            >
+              <X className="h-4 w-4" />
+              Close Menu
+            </button>
           </div>
         </div>
       )}
