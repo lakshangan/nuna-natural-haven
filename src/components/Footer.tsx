@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Mail, Leaf, ShieldCheck, Truck } from "lucide-react";
+import { Instagram, Facebook, Mail, ShieldCheck, Leaf, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import nunalogo from "@/assets/nunalogo.png";
 import { useEffect, useRef } from "react";
@@ -26,46 +26,42 @@ const navigation = {
   ],
 };
 
-const LushTree = ({ className, color = "currentColor", opacity = 1 }: { className?: string, color?: string, opacity?: number }) => (
-  <svg viewBox="0 0 200 300" className={className} fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity }}>
-    {/* Organic Trunk */}
-    <path
-      d="M100 300 C95 250 90 200 100 150 C110 200 105 250 100 300"
-      fill="#3d2b1f"
-    />
-    {/* Main Branches */}
-    <path d="M100 180 C120 160 160 160 180 140" stroke="#3d2b1f" strokeWidth="4" strokeLinecap="round" />
-    <path d="M100 200 C80 180 40 180 20 160" stroke="#3d2b1f" strokeWidth="4" strokeLinecap="round" />
-    <path d="M100 140 C110 120 140 100 150 80" stroke="#3d2b1f" strokeWidth="3" strokeLinecap="round" />
-    <path d="M100 160 C90 140 60 120 50 100" stroke="#3d2b1f" strokeWidth="3" strokeLinecap="round" />
-
-    {/* Leaf Clusters - Varying shades of green */}
-    <circle cx="180" cy="140" r="22" fill="#2d5a27" opacity="0.8" />
-    <circle cx="165" cy="130" r="18" fill="#4a7c44" opacity="0.9" />
-    <circle cx="20" cy="160" r="22" fill="#2d5a27" opacity="0.8" />
-    <circle cx="35" cy="150" r="18" fill="#4a7c44" opacity="0.9" />
-    <circle cx="150" cy="80" r="20" fill="#2d5a27" opacity="0.8" />
-    <circle cx="135" cy="70" r="15" fill="#4a7c44" opacity="0.9" />
-    <circle cx="50" cy="100" r="20" fill="#2d5a27" opacity="0.8" />
-    <circle cx="65" cy="90" r="15" fill="#4a7c44" opacity="0.9" />
-    <circle cx="100" cy="60" r="25" fill="#2d5a27" opacity="0.8" />
-    <circle cx="100" cy="40" r="20" fill="#4a7c44" opacity="0.9" />
-
-    {/* Detail Leaves */}
-    <g fill={color} opacity="0.4">
-      <path d="M185 145 l5 -5 l-5 -5 l-5 5 z" />
-      <path d="M175 135 l5 -5 l-5 -5 l-5 5 z" />
-      <path d="M15 165 l5 -5 l-5 -5 l-5 5 z" />
-      <path d="M55 105 l5 -5 l-5 -5 l-5 5 z" />
-      <path d="M100 30 l5 -5 l-5 -5 l-5 5 z" />
+/**
+ * Detailed, sketchy style tree SVG.
+ */
+const SketchyTree = ({ className, color = "currentColor" }: { className?: string, color?: string }) => (
+  <svg viewBox="0 0 200 400" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g className="tree-group">
+      <path d="M100 400 C98 350 96 300 100 250 C104 200 102 150 100 100" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <path d="M98 380 Q96 340 98 300" stroke={color} strokeWidth="0.5" opacity="0.4" />
+      <path d="M102 360 Q104 320 102 280" stroke={color} strokeWidth="0.5" opacity="0.4" />
+      {[...Array(15)].map((_, i) => {
+        const y = 350 - i * 20;
+        const width = 85 - i * 5;
+        const tilt = i % 2 === 0 ? 1 : -1;
+        return (
+          <g key={i} transform={`translate(100, ${y})`}>
+            <path d={`M0 0 C${width * 0.4 * tilt} ${width * 0.15} ${width * 0.8 * tilt} ${width * 0.3} ${width * tilt} ${width * 0.5}`} stroke={color} strokeWidth="2" strokeLinecap="round" opacity={0.6} />
+            <path d={`M${width * 0.2 * tilt} 2 L${width * 0.25 * tilt} 8`} stroke={color} strokeWidth="0.5" opacity="0.3" />
+            <path d={`M${width * 0.5 * tilt} 5 L${width * 0.55 * tilt} 12`} stroke={color} strokeWidth="0.5" opacity="0.3" />
+            <path d={`M${width * 0.8 * tilt} 8 L${width * 0.85 * tilt} 15`} stroke={color} strokeWidth="0.5" opacity="0.3" />
+          </g>
+        );
+      })}
     </g>
   </svg>
 );
 
-const FloatingLeaf = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M12 2C12 2 4 8 4 14C4 18.4 7.6 22 12 22C16.4 22 20 18.4 20 14C20 8 12 2 12 2Z" fill="#4a7c44" opacity="0.3" />
-    <path d="M12 2V22M12 8L18 12M12 12L6 16" stroke="#2d5a27" strokeWidth="0.5" strokeLinecap="round" opacity="0.4" />
+/**
+ * Detailed, sketchy style cloud SVG.
+ */
+const SketchyCloud = ({ className, color = "currentColor" }: { className?: string, color?: string }) => (
+  <svg viewBox="0 0 300 150" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.6">
+      <path d="M50 100 C20 100 20 70 50 70 C50 40 100 40 120 60 C140 30 200 30 220 60 C260 60 260 100 220 100 Z" stroke={color} strokeWidth="1" strokeDasharray="3 1" />
+      <path d="M70 85 C60 85 55 75 75 75 C75 60 95 60 110 75" stroke={color} strokeWidth="0.5" opacity="0.3" />
+      <path d="M160 85 C150 85 145 70 175 70 C175 55 210 55 220 75" stroke={color} strokeWidth="0.5" opacity="0.3" />
+    </g>
   </svg>
 );
 
@@ -77,16 +73,14 @@ export const Footer = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // THE UNCOVER EFFECT
-      // Setting initial state: Footer shifted UP by 50%
       gsap.set(revealContainerRef.current, { yPercent: -50 });
 
       const uncover = gsap.timeline({
         scrollTrigger: {
           trigger: footerRef.current,
-          start: "top bottom", // when the top of the footer hits the bottom of the viewport
-          end: "bottom bottom", // when the bottom of the footer hits the bottom of the viewport
+          start: "top bottom",
+          end: "bottom bottom",
           scrub: true,
-          // markers: true, // Uncomment to debug
         }
       });
 
@@ -95,35 +89,10 @@ export const Footer = () => {
         ease: "none"
       });
 
-      // Parallax for the line reveal
-      gsap.fromTo(lineRef.current,
-        { scaleX: 0, transformOrigin: "left center" },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top bottom",
-            end: "top 40%",
-            scrub: true,
-          }
-        }
-      );
-
-      // Deep Parallax for Lush Trees
-      gsap.to(".lush-tree-back", {
-        y: -150,
-        ease: "none",
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: 0.5,
-        }
-      });
-
-      gsap.to(".lush-tree-front", {
-        y: -300,
+      // Background Text Parallax
+      gsap.to(".bg-nuna-parallax", {
+        y: -100,
+        scale: 1.1,
         ease: "none",
         scrollTrigger: {
           trigger: footerRef.current,
@@ -133,33 +102,55 @@ export const Footer = () => {
         }
       });
 
-      // Floating particles/leaves
-      gsap.to(".floating-leaf", {
-        y: "random(-40, 40)",
-        x: "random(-40, 40)",
-        rotation: "random(-30, 30)",
-        duration: "random(3, 6)",
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: {
-          amount: 2,
-          from: "random"
+      // Cloud Parallax
+      gsap.to(".cloud-layer", {
+        x: 100,
+        y: -50,
+        ease: "none",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: 2.5,
         }
       });
 
-      // Bigger text reveal
-      gsap.from(".footer-big-content > *", {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "power4.out",
+      // Tree Parallax
+      gsap.to(".tree-layer-fg", {
+        y: -250,
+        ease: "none",
         scrollTrigger: {
           trigger: footerRef.current,
-          start: "top 70%",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: 0.5,
         }
       });
+
+      gsap.to(".tree-layer-mg", {
+        y: -150,
+        ease: "none",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: 1,
+        }
+      });
+
+      // Content Stagger Reveal
+      gsap.from(".footer-grid > *", {
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 80%",
+        }
+      });
+
     }, footerRef);
 
     return () => ctx.revert();
@@ -171,95 +162,82 @@ export const Footer = () => {
       className="relative h-[850px] md:h-[750px] overflow-hidden bg-[#0D1511]"
       style={{ clipPath: "polygon(0% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
-      {/* Scrollable Container (Revealed by Uncover animation) */}
       <div
         ref={revealContainerRef}
         className="relative w-full h-full flex flex-col justify-end"
       >
-        {/* Parallax Forest Environment */}
+        {/* Cinematic Parallax Background (The "Background" you loved) */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          {/* Layer 1: Distant Detailed Trees */}
-          <div className="lush-tree-back absolute bottom-20 left-0 w-full flex justify-around opacity-10">
-            {[...Array(5)].map((_, i) => (
-              <LushTree key={`tree-back-${i}`} className="w-64 h-64 md:w-96 md:h-96" opacity={0.4} />
-            ))}
+          <div className="bg-nuna-parallax absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center opacity-[0.03]">
+            <h1 className="text-[30vw] font-black tracking-tighter leading-none text-warm-cream select-none">
+              NUNA
+            </h1>
           </div>
 
-          {/* Layer 2: Foreground Detailed Trees */}
-          <div className="lush-tree-front absolute bottom-[-100px] left-0 w-full flex justify-between px-10 opacity-20">
+          <div className="cloud-layer absolute inset-0 opacity-15">
+            <SketchyCloud className="absolute top-[10%] left-[5%] w-64 h-auto" color="#fefae0" />
+            <SketchyCloud className="absolute top-[25%] right-[10%] w-80 h-auto" color="#fefae0" />
+          </div>
+
+          <div className="tree-layer-mg absolute bottom-[-50px] left-0 w-full flex justify-around opacity-10">
             {[...Array(4)].map((_, i) => (
-              <LushTree key={`tree-front-${i}`} className="w-80 h-80 md:w-[500px] md:h-[500px]" opacity={0.6} />
+              <SketchyTree key={`mg-${i}`} className="w-56 h-auto" color="#2D4A3B" />
             ))}
           </div>
 
-          {/* Floor Shadow */}
-          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#0D1511] to-transparent" />
+          <div className="tree-layer-fg absolute bottom-[-200px] left-0 w-full flex justify-between px-10 opacity-20 z-10">
+            <SketchyTree className="w-80 h-auto" color="#0D1511" />
+            <SketchyTree className="w-[400px] h-auto transform scale-x-[-1]" color="#0D1511" />
+          </div>
+
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D1511] via-transparent to-transparent opacity-90" />
         </div>
 
-        {/* Floating Organic Particles */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={i}
-              className="floating-leaf absolute"
-              style={{
-                top: `${Math.random() * 80}%`,
-                left: `${Math.random() * 100}%`,
-                transform: `scale(${0.4 + Math.random() * 0.8})`
-              }}
-            >
-              <FloatingLeaf className="w-10 h-10 md:w-16 md:h-16" />
-            </div>
-          ))}
-        </div>
+        {/* Previous Layout, Alignment, and Content */}
+        <div className="container mx-auto px-6 max-w-7xl relative z-20 pb-16 text-warm-cream">
+          {/* Progress Line */}
+          <div ref={lineRef} className="h-[1px] w-full bg-accent-gold/20 mb-16 md:mb-20" />
 
-        {/* Main Content Area */}
-        <div className="container mx-auto px-8 max-w-7xl relative z-20 pb-16 text-warm-cream">
-          {/* Progress Divider */}
-          <div ref={lineRef} className="h-[2px] w-full bg-accent-gold/20 mb-20" />
-
-          <div className="footer-big-content grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-12 mb-20">
-            {/* Massive Brand Statement */}
-            <div className="md:col-span-12 lg:col-span-6 space-y-12">
-              <Link to="/" className="inline-block transition-transform duration-500 hover:scale-105">
+          <div className="footer-grid grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16">
+            {/* Brand Identity Section (Previous Content) */}
+            <div className="md:col-span-12 lg:col-span-5 space-y-10">
+              <Link to="/" className="inline-block group">
                 <img
                   src={nunalogo}
                   alt="Nuna Origin"
-                  className="h-20 w-auto object-contain brightness-0 invert opacity-95"
+                  className="h-16 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-all duration-500"
                 />
               </Link>
 
-              <h2 className="text-4xl md:text-6xl font-heading leading-tight text-warm-cream/90 font-light italic tracking-tight">
-                Crafting the purity of <span className="text-accent-gold font-normal">nature</span> for your daily ritual.
-              </h2>
+              <p className="max-w-md text-xl md:text-2xl font-heading leading-relaxed text-warm-cream/80 italic">
+                "Redefining natural care with the wisdom of the forest and the purity of the heart."
+              </p>
 
-              <div className="flex gap-8">
+              <div className="flex gap-6">
                 {navigation.social.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
-                    className="group flex items-center gap-3 text-sm md:text-base font-bold uppercase tracking-[0.2em] text-warm-cream/40 hover:text-accent-gold transition-all duration-500"
+                    className="w-12 h-12 rounded-full border border-warm-cream/10 flex items-center justify-center text-warm-cream/40 hover:text-accent-gold hover:border-accent-gold/40 hover:bg-accent-gold/5 transition-all duration-500"
                   >
-                    <item.icon className="w-6 h-6 group-hover:scale-125 transition-transform" />
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity hidden md:inline">{item.name}</span>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
                   </a>
                 ))}
               </div>
             </div>
 
-            {/* Navigation Sections with Bigger Text */}
-            <div className="md:col-span-4 lg:col-span-3 space-y-10">
-              <h4 className="text-[12px] uppercase tracking-[0.4em] font-black text-accent-gold/60">
-                Explore The Collections
+            {/* Navigation Columns (Previous Alignment) */}
+            <div className="md:col-span-4 lg:col-span-2">
+              <h4 className="text-[11px] uppercase tracking-[0.3em] font-bold text-accent-gold/80 mb-8">
+                Collections
               </h4>
-              <ul className="space-y-6">
+              <ul className="space-y-4">
                 {navigation.shop.map((item) => (
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className="text-xl md:text-2xl font-heading text-warm-cream/50 hover:text-warm-cream transition-all duration-300 flex items-center group"
+                      className="text-warm-cream/50 hover:text-warm-cream transition-colors duration-300 text-base"
                     >
-                      <span className="w-0 group-hover:w-8 overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100 text-accent-gold mr-0 group-hover:mr-4">—</span>
                       {item.name}
                     </Link>
                   </li>
@@ -267,54 +245,63 @@ export const Footer = () => {
               </ul>
             </div>
 
-            <div className="md:col-span-4 lg:col-span-3 space-y-10">
-              <h4 className="text-[12px] uppercase tracking-[0.4em] font-black text-accent-gold/60">
-                Our Sanctuary
+            <div className="md:col-span-4 lg:col-span-2">
+              <h4 className="text-[11px] uppercase tracking-[0.3em] font-bold text-accent-gold/80 mb-8">
+                Discovery
               </h4>
-              <ul className="space-y-6">
+              <ul className="space-y-4">
                 {navigation.company.map((item) => (
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className="text-xl md:text-2xl font-heading text-warm-cream/50 hover:text-warm-cream transition-all duration-300 flex items-center group"
+                      className="text-warm-cream/50 hover:text-warm-cream transition-colors duration-300 text-base"
                     >
-                      <span className="w-0 group-hover:w-8 overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100 text-accent-gold mr-0 group-hover:mr-4">—</span>
                       {item.name}
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
+
+            {/* Core Values Section (Previous Content) */}
+            <div className="md:col-span-4 lg:col-span-3 space-y-8">
+              <div className="p-8 rounded-2xl bg-warm-cream/[0.03] border border-warm-cream/5 backdrop-blur-sm space-y-8">
+                <div className="flex items-center gap-4 text-warm-cream/60 group">
+                  <Leaf className="w-6 h-6 text-accent-gold/50 group-hover:rotate-12 transition-transform" />
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase">100% Organic</span>
+                </div>
+                <div className="flex items-center gap-4 text-warm-cream/60 group">
+                  <ShieldCheck className="w-6 h-6 text-accent-gold/50 group-hover:rotate-12 transition-transform" />
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase">Ethically Sourced</span>
+                </div>
+                <div className="flex items-center gap-4 text-warm-cream/60 group">
+                  <Truck className="w-6 h-6 text-accent-gold/50 group-hover:rotate-12 transition-transform" />
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase">Secure Delivery</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Bottom Utility Bar */}
-          <div className="border-t border-warm-cream/5 pt-12 flex flex-col md:flex-row justify-between items-end md:items-center gap-10">
-            <div className="space-y-4">
-              <p className="text-warm-cream/20 text-[10px] tracking-[0.4em] font-bold uppercase">
+          {/* Bottom Bar (Previous Content) */}
+          <div className="border-t border-warm-cream/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <p className="text-warm-cream/30 text-[10px] tracking-[0.4em] font-medium uppercase">
                 &copy; {new Date().getFullYear()} RENU'S NATURAL HAVEN Sanctuary
               </p>
-              <div className="flex gap-10 text-warm-cream/30 text-[10px] font-black tracking-[0.4em] uppercase">
-                <Link to="/privacy" className="hover:text-accent-gold transition-colors">Privacy</Link>
-                <Link to="/terms" className="hover:text-accent-gold transition-colors">Terms</Link>
-                <Link to="/shipping" className="hover:text-accent-gold transition-colors">Shipping</Link>
-              </div>
+              <p className="text-accent-gold/30 text-[9px] tracking-[0.3em] uppercase">Sustainable Beauty Essentials</p>
             </div>
 
-            <div className="flex items-center gap-6 group">
-              <div className="flex flex-col items-end gap-1">
-                <span className="text-[10px] tracking-[0.3em] font-bold text-warm-cream/20 uppercase">Sourced from</span>
-                <span className="text-lg md:text-xl font-heading text-accent-gold/40 group-hover:text-accent-gold transition-colors animate-pulse">Eternal Forests</span>
-              </div>
-              <ShieldCheck className="w-10 h-10 text-accent-gold/20 group-hover:text-accent-gold transition-colors" />
+            <div className="flex gap-10 text-warm-cream/30 text-[10px] font-bold tracking-[0.4em] uppercase">
+              <Link to="/privacy" className="hover:text-accent-gold transition-colors">Privacy</Link>
+              <Link to="/terms" className="hover:text-accent-gold transition-colors">Terms</Link>
+              <Link to="/shipping" className="hover:text-accent-gold transition-colors">Shipping</Link>
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* Subtle Bottom vignette */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-30" />
     </footer>
   );
 };
-
-
