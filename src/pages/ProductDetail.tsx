@@ -197,9 +197,9 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="pt-24 pb-16">
+      <main className="relative z-10 bg-background shadow-2xl pt-24 pb-16">
         <div className="container mx-auto px-6 max-w-[1180px]">
           {/* Back Button */}
           <Link

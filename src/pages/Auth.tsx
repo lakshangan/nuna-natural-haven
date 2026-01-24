@@ -8,13 +8,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, User as UserIcon, Globe } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Globe, Eye, EyeOff } from "lucide-react";
 
 
 import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
@@ -30,9 +31,8 @@ const Auth = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await signup(email, password);
-            toast.success("Account created successfully!");
-            navigate("/");
+            await signup(email, password, fullName);
+            toast.success("Account created! Please verify your email.");
         } catch (error: any) {
             toast.error(error.message || "Signup failed");
         } finally {
@@ -45,7 +45,7 @@ const Auth = () => {
         setLoading(true);
         try {
             await login(email, password);
-            toast.success("Logged in successfully!");
+            toast.success("Welcome back to Nuna Origin!");
             navigate("/");
         } catch (error: any) {
             toast.error(error.message || "Login failed");
@@ -55,10 +55,15 @@ const Auth = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-[#FDFCFB] selection:bg-accent/30">
             <Navbar />
-            <main className="pt-32 pb-16 container mx-auto px-6 flex justify-center items-center">
-                <Card className="w-full max-w-md shadow-2xl border-primary/10 animate-reveal">
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-accent/5 rounded-full blur-[120px]" />
+                <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]" />
+            </div>
+
+            <main className="relative z-10 bg-[#FDFCFB] shadow-2xl pt-32 pb-16 container mx-auto px-6 flex justify-center items-center min-h-[90vh]">
+                <Card className="w-full max-w-md bg-white/70 backdrop-blur-xl border-white/40 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden animate-reveal">
                     <Tabs defaultValue="login" className="w-full">
                         <CardHeader className="text-center space-y-1">
                             <CardTitle className="text-3xl font-heading font-bold text-primary">Account</CardTitle>
@@ -118,18 +123,32 @@ const Auth = () => {
                                     <div className="space-y-2">
                                         <div className="flex justify-between items-center">
                                             <Label htmlFor="password">Password</Label>
-                                            <button type="button" className="text-xs text-accent hover:underline">Forgot password?</button>
+                                            <button type="button" className="text-xs text-accent hover:underline decoration-accent/30 font-medium">Forgot password?</button>
                                         </div>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <div className="relative group/pass">
+                                            <div className={`absolute left-3 top-3 transition-transform duration-300 ${showPassword ? 'rotate-12 scale-110' : ''}`}>
+                                                <Lock className={`h-4 w-4 transition-colors duration-300 ${showPassword ? 'text-primary' : 'text-muted-foreground'}`} />
+                                            </div>
                                             <Input
                                                 id="password"
-                                                type="password"
-                                                className="pl-10"
+                                                type={showPassword ? "text" : "password"}
+                                                className="pl-10 pr-10 bg-white/50 border-slate-200 focus:border-primary/30 transition-all duration-300"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-all duration-300 transform hover:scale-110 active:scale-95"
+                                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4 animate-in fade-in zoom-in duration-300" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4 animate-in fade-in zoom-in duration-300" />
+                                                )}
+                                            </button>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -201,16 +220,29 @@ const Auth = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="reg-password">Password</Label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <div className="relative group/pass">
+                                            <div className={`absolute left-3 top-3 transition-transform duration-300 ${showPassword ? 'rotate-12 scale-110' : ''}`}>
+                                                <Lock className={`h-4 w-4 transition-colors duration-300 ${showPassword ? 'text-accent' : 'text-muted-foreground'}`} />
+                                            </div>
                                             <Input
                                                 id="reg-password"
-                                                type="password"
-                                                className="pl-10"
+                                                type={showPassword ? "text" : "password"}
+                                                className="pl-10 pr-10 bg-white/50 border-slate-200 focus:border-accent/30 transition-all duration-300"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-3 text-muted-foreground hover:text-accent transition-all duration-300 transform hover:scale-110 active:scale-95"
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4 animate-in fade-in zoom-in duration-300" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4 animate-in fade-in zoom-in duration-300" />
+                                                )}
+                                            </button>
                                         </div>
                                     </div>
                                 </CardContent>

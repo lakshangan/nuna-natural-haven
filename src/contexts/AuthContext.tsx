@@ -7,7 +7,7 @@ interface AuthContextType {
     user: any | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
-    signup: (email: string, password: string) => Promise<void>;
+    signup: (email: string, password: string, fullName: string) => Promise<void>;
     loginWithGoogle: () => Promise<void>;
     updateProfile: (data: { full_name?: string, address?: string, phone?: string }) => Promise<void>;
 
@@ -96,11 +96,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await fetchMe(data.session.access_token);
     };
 
-    const signup = async (email: string, password: string) => {
+    const signup = async (email: string, password: string, fullName: string) => {
         const response = await fetch(`${API_URL}/auth/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password, fullName })
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Signup failed');
@@ -118,13 +118,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const loginWithGoogle = async () => {
         try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: `${window.location.origin}/auth/callback`,
-                },
-            });
-            if (error) throw error;
+            // In a decoupled architecture, we redirect the browser to the BACKEND's google auth route
+            // The backend then handles the handshake with Supabase and redirects back to /auth/callback
+            window.location.href = `${API_URL}/auth/google`;
         } catch (error: any) {
             console.error('Google login error:', error.message);
             throw error;

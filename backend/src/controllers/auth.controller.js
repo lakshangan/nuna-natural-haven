@@ -4,7 +4,7 @@ import { supabase } from '../config/db.js';
 // @route   POST /api/auth/signup
 // @access  Public
 export const signup = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, fullName } = req.body;
 
     try {
         const { data, error } = await supabase.auth.signUp({
@@ -19,6 +19,7 @@ export const signup = async (req, res) => {
             await supabase.from('profiles').upsert({
                 id: data.user.id,
                 email: data.user.email,
+                full_name: fullName,
                 role: 'user' // Default role
             }, { onConflict: 'id' });
         }
@@ -29,6 +30,7 @@ export const signup = async (req, res) => {
             session: data.session
         });
     } catch (error) {
+        console.error('Signup Error:', error.message);
         res.status(400).json({ message: error.message });
     }
 };
@@ -47,7 +49,11 @@ export const login = async (req, res) => {
         });
 
         if (error) {
-            console.error('Supabase Login Error:', error.message);
+            console.error('Login Failed:', error.message);
+            // Check if user is not confirmed
+            if (error.message.includes('Email not confirmed')) {
+                return res.status(401).json({ message: 'Please confirm your email address before logging in.' });
+            }
             throw error;
         }
 
@@ -59,7 +65,7 @@ export const login = async (req, res) => {
             session: data.session
         });
     } catch (error) {
-        res.status(401).json({ message: error.message });
+        res.status(401).json({ message: error.message || 'Invalid email or password' });
     }
 };
 

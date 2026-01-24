@@ -78,7 +78,7 @@ const Ingredients = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main>
+      <main className="relative z-10 bg-background shadow-2xl">
         {/* Hero */}
         <section className="relative pt-24 pb-20 overflow-hidden">
           <div
@@ -141,11 +141,10 @@ const Ingredients = () => {
 
                     {/* Benefits - Show on hover or selection */}
                     <div
-                      className={`transition-all duration-300 ${
-                        selectedIngredient === index
+                      className={`transition-all duration-300 ${selectedIngredient === index
                           ? "opacity-100 max-h-96"
                           : "opacity-0 max-h-0 overflow-hidden"
-                      }`}
+                        }`}
                     >
                       <div className="space-y-4 pt-4 border-t border-border">
                         <div>
@@ -175,9 +174,8 @@ const Ingredients = () => {
 
                     {/* Hover Indicator */}
                     <div
-                      className={`absolute bottom-4 right-4 text-xs text-muted-foreground transition-opacity ${
-                        selectedIngredient === index ? "opacity-0" : "opacity-100"
-                      }`}
+                      className={`absolute bottom-4 right-4 text-xs text-muted-foreground transition-opacity ${selectedIngredient === index ? "opacity-0" : "opacity-100"
+                        }`}
                     >
                       Tap to explore
                     </div>

@@ -30,7 +30,7 @@ const About = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main>
+      <main className="relative z-10 bg-background shadow-2xl">
         {/* Hero */}
         <section className="relative pt-24 pb-20 overflow-hidden">
           <div
