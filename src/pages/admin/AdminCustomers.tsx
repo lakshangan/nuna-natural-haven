@@ -84,7 +84,7 @@ export const AdminCustomers = () => {
                                                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${customer.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
                                                         {customer.role || 'user'}
                                                     </span>
-                                                    <p className="text-xs text-slate-500">Member since {new Date(customer.created_at).getFullYear()}</p>
+                                                    <p className="text-xs text-slate-500">Member since {new Date(customer.updated_at || Date.now()).getFullYear()}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -102,7 +102,7 @@ export const AdminCustomers = () => {
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-center text-sm text-slate-500 font-medium whitespace-nowrap">
-                                        {new Date(customer.created_at).toLocaleDateString()}
+                                        {new Date(customer.updated_at || Date.now()).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 text-center font-bold text-slate-900">
                                         {customer.orders_count || 0}
