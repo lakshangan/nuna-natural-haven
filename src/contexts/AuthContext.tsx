@@ -9,7 +9,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     signup: (email: string, password: string, fullName: string) => Promise<void>;
     loginWithGoogle: () => Promise<void>;
-    updateProfile: (data: { full_name?: string, address?: string, phone?: string }) => Promise<void>;
+    updateProfile: (data: { full_name?: string, address?: string, phone?: string, birthday?: string, gender?: string }) => Promise<void>;
 
     signOut: () => void;
     handleToken: (token: string) => Promise<void>;
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
-    const updateProfile = async (profileData: { full_name?: string, address?: string, phone?: string }) => {
+    const updateProfile = async (profileData: { full_name?: string, address?: string, phone?: string, birthday?: string, gender?: string }) => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
