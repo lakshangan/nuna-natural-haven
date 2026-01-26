@@ -14,7 +14,7 @@ export const AdminCustomers = () => {
 
     const fetchCustomers = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
             const response = await fetch(`${BACKEND_URL}/api/admin/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });

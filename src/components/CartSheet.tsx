@@ -27,14 +27,16 @@ export const CartSheet = () => {
         try {
             toast.loading("Preparing your secure checkout...");
 
-            // In a real app, we send this to our backend
-            const response = await fetch(`${BACKEND_URL}/api/orders/checkout`, {
+            // Connect to our new secure Stripe session endpoint
+            const response = await fetch(`${BACKEND_URL}/api/stripe/create-checkout-session`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     items: cart,
-                    total: totalPrice,
-                    email: user?.email || "customer@example.com" // Sending email for confirmation
+                    userId: user?.id,
+                    email: user?.email,
+                    successUrl: `${window.location.origin}/checkout-success`,
+                    cancelUrl: `${window.location.origin}/shop`
                 }),
             });
 

@@ -14,7 +14,7 @@ export const AdminOrders = () => {
 
     const fetchOrders = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
             const response = await fetch(`${BACKEND_URL}/api/admin/orders`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -96,7 +96,7 @@ export const AdminOrders = () => {
                                         <p className="text-xs text-slate-500">{order.customer_email}</p>
                                     </td>
                                     <td className="px-6 py-4 text-center font-bold text-slate-900">
-                                        ₹{order.total?.toLocaleString('en-IN')}
+                                        ₹{order.total_amount?.toLocaleString('en-IN')}
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(order.status)}`}>

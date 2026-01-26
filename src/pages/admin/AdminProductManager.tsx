@@ -25,9 +25,9 @@ export const AdminProductManager = () => {
         name: '',
         price: '',
         description: '',
-        image: '',
+        image_url: '',
         category: 'Skin Care',
-        stock: '100',
+        stock_quantity: '100',
         slug: ''
     });
 
@@ -59,7 +59,7 @@ export const AdminProductManager = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const token = localStorage.getItem('adminToken');
+        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
 
         try {
             const url = editingProduct
@@ -77,7 +77,7 @@ export const AdminProductManager = () => {
                 body: JSON.stringify({
                     ...formData,
                     price: parseFloat(formData.price),
-                    stock: parseInt(formData.stock)
+                    stock_quantity: parseInt(formData.stock_quantity)
                 })
             });
 
@@ -85,7 +85,7 @@ export const AdminProductManager = () => {
                 toast.success(editingProduct ? 'Product Updated' : 'Product Added');
                 setIsModalOpen(false);
                 setEditingProduct(null);
-                setFormData({ name: '', price: '', description: '', image: '', category: 'Skin Care', stock: '100', slug: '' });
+                setFormData({ name: '', price: '', description: '', image_url: '', category: 'Skin Care', stock_quantity: '100', slug: '' });
                 fetchProducts();
             } else {
                 const error = await response.json();
@@ -99,7 +99,7 @@ export const AdminProductManager = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return;
 
-        const token = localStorage.getItem('adminToken');
+        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
         try {
             const response = await fetch(`${BACKEND_URL}/api/products/${id}`, {
                 method: 'DELETE',
@@ -121,9 +121,9 @@ export const AdminProductManager = () => {
             name: product.name,
             price: product.price.toString(),
             description: product.description,
-            image: product.image,
+            image_url: product.image_url,
             category: product.category,
-            stock: product.stock.toString(),
+            stock_quantity: product.stock_quantity.toString(),
             slug: product.slug
         });
         setIsModalOpen(true);
@@ -144,7 +144,7 @@ export const AdminProductManager = () => {
                 <button
                     onClick={() => {
                         setEditingProduct(null);
-                        setFormData({ name: '', price: '', description: '', image: '', category: 'Skin Care', stock: '100', slug: '' });
+                        setFormData({ name: '', price: '', description: '', image_url: '', category: 'Skin Care', stock_quantity: '100', slug: '' });
                         setIsModalOpen(true);
                     }}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -189,7 +189,7 @@ export const AdminProductManager = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-lg bg-emerald-50 overflow-hidden flex-shrink-0 border border-emerald-100/50">
-                                                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                                             </div>
                                             <div>
                                                 <p className="font-bold text-slate-900">{product.name}</p>
@@ -206,8 +206,8 @@ export const AdminProductManager = () => {
                                         ₹{product.price}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className={`font-bold ${product.stock < 10 ? 'text-red-500' : 'text-slate-600'}`}>
-                                            {product.stock}
+                                        <span className={`font-bold ${product.stock_quantity < 10 ? 'text-red-500' : 'text-slate-600'}`}>
+                                            {product.stock_quantity}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
@@ -278,7 +278,7 @@ export const AdminProductManager = () => {
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stock Level</label>
                                     <input
-                                        type="number" name="stock" required value={formData.stock} onChange={handleInputChange}
+                                        type="number" name="stock_quantity" required value={formData.stock_quantity} onChange={handleInputChange}
                                         className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
                                         placeholder="100"
                                     />
@@ -286,7 +286,7 @@ export const AdminProductManager = () => {
                                 <div className="space-y-2 md:col-span-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Image URL</label>
                                     <input
-                                        type="text" name="image" required value={formData.image} onChange={handleInputChange}
+                                        type="text" name="image_url" required value={formData.image_url} onChange={handleInputChange}
                                         className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
                                         placeholder="https://images.unsplash.com/..."
                                     />

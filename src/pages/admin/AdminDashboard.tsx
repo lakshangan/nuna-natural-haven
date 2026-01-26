@@ -52,7 +52,7 @@ export const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
             const response = await fetch(`${BACKEND_URL}/api/admin/stats`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -71,6 +71,16 @@ export const AdminDashboard = () => {
         { label: 'Customers', value: realStats.totalUsers.toString(), change: '+14.1%', icon: Users, color: 'purple' },
         { label: 'Products', value: realStats.totalProducts.toString(), change: '+2', icon: Package, color: 'orange' },
     ];
+    const getColorClasses = (color: string) => {
+        switch (color) {
+            case 'emerald': return 'bg-emerald-50 text-emerald-600';
+            case 'blue': return 'bg-blue-50 text-blue-600';
+            case 'purple': return 'bg-purple-50 text-purple-600';
+            case 'orange': return 'bg-orange-50 text-orange-600';
+            default: return 'bg-slate-50 text-slate-600';
+        }
+    };
+
     return (
         <div className="space-y-8 animate-reveal">
             <div className="flex justify-between items-end">
@@ -92,7 +102,7 @@ export const AdminDashboard = () => {
                 {stats.map((stat) => (
                     <div key={stat.label} className="bg-white p-6 rounded-2xl border border-emerald-50 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
-                            <div className={`p-3 rounded-xl bg-${stat.color}-50 text-${stat.color}-600`}>
+                            <div className={`p-3 rounded-xl ${getColorClasses(stat.color)}`}>
                                 <stat.icon className="w-6 h-6" />
                             </div>
                             <span className="flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
@@ -156,7 +166,7 @@ export const AdminDashboard = () => {
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-slate-900">Order #ORD-{order.id.toString().slice(-4).toUpperCase()}</p>
-                                        <p className="text-xs text-slate-500">{order.items?.length || 0} products • ₹{order.total?.toLocaleString('en-IN')}</p>
+                                        <p className="text-xs text-slate-500">{order.items?.length || 0} products • ₹{order.total_amount?.toLocaleString('en-IN')}</p>
                                     </div>
                                 </div>
                                 <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-md ${order.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>

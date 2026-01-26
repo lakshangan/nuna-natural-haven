@@ -3,6 +3,7 @@ import productRoutes from './product.routes.js';
 import adminRoutes from './admin.routes.js';
 import orderRoutes from './order.routes.js';
 import authRoutes from './auth.routes.js';
+import stripeRoutes from './stripe.routes.js';
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ router.use('/products', productRoutes);
 router.use('/admin', adminRoutes);
 router.use('/orders', orderRoutes);
 router.use('/auth', authRoutes);
+router.use('/stripe', stripeRoutes);
 
 // 404 handler for API routes
 // Since this is the last middleware in the router, 

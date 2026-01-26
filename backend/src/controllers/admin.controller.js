@@ -45,9 +45,9 @@ export const getAdminStats = async (req, res) => {
     try {
         const { count: productCount } = await supabase.from('products').select('*', { count: 'exact', head: true });
         const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-        const { data: orders } = await supabase.from('orders').select('total');
+        const { data: orders } = await supabase.from('orders').select('total_amount');
 
-        const totalRevenue = orders?.reduce((acc, order) => acc + (order.total || 0), 0) || 0;
+        const totalRevenue = orders?.reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0) || 0;
         const totalOrders = orders?.length || 0;
 
         const { data: recentOrders } = await supabase
