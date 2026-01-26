@@ -106,6 +106,7 @@ const App = () => {
                     {/* Admin Routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/admin" element={<AdminLayout />}>
+                      <Route index element={<AdminDashboard />} />
                       <Route path="dashboard" element={<AdminDashboard />} />
                       <Route path="products" element={<AdminProductManager />} />
                       <Route path="orders" element={<AdminOrders />} />
