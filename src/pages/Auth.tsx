@@ -60,48 +60,34 @@ const Auth = () => {
 
             {/* Ambient Background Elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
-                <motion.div
-                    animate={{
-                        scale: [1, 1.1, 1],
-                        opacity: [0.3, 0.4, 0.3]
-                    }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-[10%] -right-[5%] w-[60vw] h-[60vw] bg-emerald-50 rounded-full blur-[100px]"
-                />
-                <motion.div
-                    animate={{
-                        scale: [1.1, 1, 1.1],
-                        opacity: [0.2, 0.3, 0.2]
-                    }}
-                    transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-[20%] -left-[10%] w-[50vw] h-[50vw] bg-accent/5 rounded-full blur-[100px]"
-                />
+                <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-emerald-50/40 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
+                <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-accent/5 rounded-full blur-[100px] translate-y-1/4 -translate-x-1/4" />
             </div>
 
-            <main className="relative z-10 flex-grow pt-28 pb-20 container mx-auto px-5 md:px-6 flex justify-center items-center">
-                <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-10 xl:gap-24 items-center">
+            <main className="relative z-10 flex-grow pt-32 pb-24 container mx-auto px-6 flex justify-center items-center">
+                <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-16 xl:gap-32 items-center">
 
                     {/* Brand Story (Desktop) */}
-                    <div className="hidden lg:flex flex-col space-y-10 animate-in fade-in slide-in-from-left-12 duration-1000">
-                        <div className="space-y-6">
+                    <div className="hidden lg:flex flex-col space-y-12 animate-in fade-in slide-in-from-left-10 duration-1000">
+                        <div className="space-y-8">
                             <motion.div
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-100/50 text-emerald-800 text-[11px] font-bold tracking-[0.2em] uppercase border border-emerald-200/40"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/50 text-emerald-800 text-[10px] font-black tracking-[0.2em] uppercase border border-emerald-200/30"
                             >
                                 <Sparkles className="w-3.5 h-3.5" />
-                                Nuna Origin Community
+                                Nuna Origin Collective
                             </motion.div>
-                            <h1 className="text-5xl xl:text-7xl font-heading font-extrabold text-emerald-950 leading-[1.1] tracking-tight">
+                            <h1 className="text-6xl xl:text-7xl font-heading font-extrabold text-emerald-950 leading-[0.95] tracking-tight">
                                 Pure Rituals <br />
-                                <span className="text-accent italic">For Your Soul</span>
+                                <span className="text-accent italic font-serif serif">For Your Soul</span>
                             </h1>
-                            <p className="text-xl text-emerald-900/60 max-w-md leading-relaxed font-medium">
+                            <p className="text-lg xl:text-xl text-emerald-900/60 max-w-md leading-relaxed font-medium">
                                 Join our collective of botanical enthusiasts and discover nature's most potent transformations.
                             </p>
                         </div>
 
-                        <div className="flex flex-col gap-5 max-w-sm">
+                        <div className="grid gap-4 max-w-md">
                             {[
                                 { icon: Leaf, title: "Pure Ingredients", desc: "100% Organic & Certified" },
                                 { icon: Sprout, title: "Sustainable Living", desc: "Eco-conscious packaging" }
@@ -111,13 +97,13 @@ const Auth = () => {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.5 + (i * 0.1) }}
-                                    className="flex items-center gap-5 p-5 rounded-[2rem] bg-white/40 backdrop-blur-md border border-white shadow-sm hover:shadow-xl hover:bg-white/60 transition-all group cursor-default"
+                                    className="flex items-center gap-6 p-4 rounded-[2rem] bg-white/60 backdrop-blur-md border border-white shadow-sm hover:shadow-md transition-all group"
                                 >
-                                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
-                                        <item.icon className="w-6 h-6" />
+                                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                                        <item.icon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-emerald-950 text-lg">{item.title}</h3>
+                                        <h4 className="font-bold text-emerald-950 text-base">{item.title}</h4>
                                         <p className="text-sm text-emerald-900/50 font-medium">{item.desc}</p>
                                     </div>
                                 </motion.div>
@@ -127,37 +113,37 @@ const Auth = () => {
 
                     {/* Auth Card */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.98, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="relative w-full"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="relative w-full max-w-[440px] mx-auto lg:ml-auto"
                     >
-                        <Card className="w-full bg-white/95 backdrop-blur-2xl border border-white shadow-[0_40px_100px_-20px_rgba(20,40,30,0.1)] rounded-[3rem] overflow-hidden">
+                        <Card className="w-full bg-white/95 backdrop-blur-3xl border border-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] rounded-[3rem] overflow-hidden">
                             <Tabs defaultValue="login" className="w-full" onValueChange={setActiveTab}>
                                 <div className="p-8 pb-4 flex flex-col items-center">
-                                    <div className="w-14 h-14 rounded-3xl bg-emerald-950 mb-8 flex items-center justify-center text-white shadow-2xl shadow-emerald-950/20 rotate-3 animate-pulse">
+                                    <div className="w-16 h-16 rounded-[2rem] bg-emerald-950 mb-8 flex items-center justify-center text-white shadow-2xl shadow-emerald-950/20 translate-y-[-10px]">
                                         <Leaf className="w-7 h-7" />
                                     </div>
-                                    <CardHeader className="text-center space-y-3 p-0 mb-10">
+                                    <CardHeader className="text-center space-y-2 p-0 mb-10">
                                         <CardTitle className="text-4xl font-heading font-extrabold text-emerald-950 tracking-tight">
-                                            {activeTab === "login" ? "Welcome Home" : "Join the Family"}
+                                            {activeTab === "login" ? "Welcome Home" : "Join Nuna"}
                                         </CardTitle>
-                                        <CardDescription className="text-emerald-900/50 text-lg font-medium leading-relaxed px-4">
+                                        <CardDescription className="text-emerald-900/50 text-base font-medium px-6">
                                             {activeTab === "login"
                                                 ? "Enter your details to access your Nuna profile"
-                                                : "Create your personal account to start today"}
+                                                : "Create your free account and start your journey"}
                                         </CardDescription>
                                     </CardHeader>
 
-                                    <TabsList className="grid w-full grid-cols-2 bg-emerald-100/30 p-1.5 rounded-2xl border border-emerald-200/40">
+                                    <TabsList className="grid w-full h-12 grid-cols-2 bg-emerald-100/30 p-1.5 rounded-2xl border border-emerald-200/40">
                                         <TabsTrigger
                                             value="login"
-                                            className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-emerald-950 data-[state=active]:shadow-xl transition-all h-12 text-sm font-bold uppercase tracking-widest"
+                                            className="h-full rounded-xl data-[state=active]:bg-white data-[state=active]:text-emerald-950 data-[state=inactive]:text-emerald-950/50 data-[state=active]:shadow-sm transition-all text-[11px] font-black uppercase tracking-[0.2em]"
                                         >
                                             Sign In
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="register"
-                                            className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-emerald-950 data-[state=active]:shadow-xl transition-all h-12 text-sm font-bold uppercase tracking-widest"
+                                            className="h-full rounded-xl data-[state=active]:bg-white data-[state=active]:text-emerald-950 data-[state=inactive]:text-emerald-950/50 data-[state=active]:shadow-sm transition-all text-[11px] font-black uppercase tracking-[0.2em]"
                                         >
                                             Register
                                         </TabsTrigger>
@@ -167,13 +153,13 @@ const Auth = () => {
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={activeTab}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.25 }}
+                                        initial={{ opacity: 0, x: 5 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -5 }}
+                                        transition={{ duration: 0.2 }}
                                     >
                                         <TabsContent value="login" className="m-0">
-                                            <form onSubmit={handleLogin} className="p-8 pb-10 space-y-8">
+                                            <form onSubmit={handleLogin} className="px-8 pb-10 space-y-8 mt-4">
                                                 <SocialLogin onGoogleClick={handleGoogleRedirect} isLogin />
 
                                                 <div className="space-y-6">
@@ -190,14 +176,14 @@ const Auth = () => {
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center px-1">
                                                             <Label htmlFor="password" text="Security Password">Security Password</Label>
-                                                            <button type="button" className="text-[11px] font-bold text-emerald-600 hover:text-accent tracking-widest uppercase transition-colors">Forgot?</button>
+                                                            <button type="button" className="text-[10px] font-black text-emerald-600 hover:text-accent tracking-widest uppercase transition-colors">Forgot?</button>
                                                         </div>
                                                         <div className="relative group/pass">
                                                             <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-200 group-focus-within/pass:text-emerald-600 transition-colors" />
                                                             <Input
                                                                 id="password"
                                                                 type={showPassword ? "text" : "password"}
-                                                                className="pl-14 pr-12 h-16 rounded-[1.5rem] bg-emerald-50/30 border-emerald-100/50 focus:border-emerald-300 focus:bg-white transition-all text-emerald-950 font-medium placeholder:text-emerald-200"
+                                                                className="pl-14 pr-12 h-14 rounded-[1.25rem] bg-emerald-50/40 border-emerald-100/50 focus:border-emerald-300 focus:bg-white transition-all text-emerald-950 font-medium placeholder:text-emerald-200 shadow-none ring-0"
                                                                 value={password}
                                                                 onChange={(e) => setPassword(e.target.value)}
                                                                 required
@@ -207,26 +193,26 @@ const Auth = () => {
                                                                 onClick={() => setShowPassword(!showPassword)}
                                                                 className="absolute right-5 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-emerald-600 transition-colors"
                                                             >
-                                                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <Button
-                                                    className="w-full bg-emerald-950 hover:bg-emerald-900 text-white h-16 rounded-[1.5rem] text-xl font-bold shadow-2xl shadow-emerald-950/20 active:scale-[0.98] transition-all group overflow-hidden"
+                                                    className="w-full bg-emerald-950 hover:bg-emerald-900 text-white h-14 rounded-[1.25rem] text-lg font-bold shadow-xl shadow-emerald-950/10 active:scale-[0.98] transition-all group"
                                                     disabled={loading}
                                                 >
-                                                    <span className="relative z-10 flex items-center justify-center gap-3">
+                                                    <span className="flex items-center justify-center gap-3">
                                                         {loading ? "Verifying..." : "Sign In to Profile"}
-                                                        {!loading && <ArrowRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />}
+                                                        {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />}
                                                     </span>
                                                 </Button>
                                             </form>
                                         </TabsContent>
 
                                         <TabsContent value="register" className="m-0">
-                                            <form onSubmit={handleSignUp} className="p-8 pb-10 space-y-8">
+                                            <form onSubmit={handleSignUp} className="px-8 pb-10 space-y-8 mt-4">
                                                 <SocialLogin onGoogleClick={handleGoogleRedirect} />
 
                                                 <div className="space-y-6">
@@ -255,7 +241,7 @@ const Auth = () => {
                                                             <Input
                                                                 id="reg-password"
                                                                 type={showPassword ? "text" : "password"}
-                                                                className="pl-14 pr-12 h-16 rounded-[1.5rem] bg-emerald-50/30 border-emerald-100/50 text-emerald-950 font-medium placeholder:text-emerald-200"
+                                                                className="pl-14 pr-12 h-14 rounded-[1.25rem] bg-emerald-50/40 border-emerald-100/50 text-emerald-950 font-medium placeholder:text-emerald-200"
                                                                 value={password}
                                                                 onChange={(e) => setPassword(e.target.value)}
                                                                 required
@@ -265,14 +251,14 @@ const Auth = () => {
                                                                 onClick={() => setShowPassword(!showPassword)}
                                                                 className="absolute right-5 top-1/2 -translate-y-1/2 text-emerald-200"
                                                             >
-                                                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <Button
-                                                    className="w-full bg-accent hover:bg-accent/90 text-white h-16 rounded-[1.5rem] text-xl font-bold shadow-2xl shadow-accent/20 active:scale-[0.98] transition-all"
+                                                    className="w-full bg-accent hover:bg-accent/90 text-white h-14 rounded-[1.25rem] text-lg font-bold shadow-xl shadow-accent/20 active:scale-[0.98] transition-all"
                                                     disabled={loading}
                                                 >
                                                     {loading ? "Planting Seeds..." : "Create Free Account"}
@@ -294,14 +280,14 @@ const Auth = () => {
 // Sub-components
 const CustomField = ({ id, label, type, placeholder, icon: Icon, value, onChange }: any) => (
     <div className="space-y-2 group">
-        <Label htmlFor={id} className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-950/30 px-1">{label}</Label>
+        <Label htmlFor={id} className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-950/30 px-1">{label}</Label>
         <div className="relative">
-            <Icon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-200 group-focus-within/pass:text-emerald-600 transition-colors pointer-events-none" />
+            <Icon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-200 group-focus-within:text-emerald-600 transition-colors pointer-events-none" />
             <Input
                 id={id}
                 type={type}
                 placeholder={placeholder}
-                className="pl-14 h-16 rounded-[1.5rem] bg-emerald-50/30 border-emerald-100/50 focus:border-emerald-300 focus:bg-white transition-all text-emerald-950 font-medium placeholder:text-emerald-200 shadow-none ring-0"
+                className="pl-14 h-14 rounded-[1.25rem] bg-emerald-50/40 border-emerald-100/50 focus:border-emerald-300 focus:bg-white transition-all text-emerald-950 font-medium placeholder:text-emerald-200 shadow-none ring-0"
                 value={value}
                 onChange={onChange}
                 required
@@ -315,10 +301,10 @@ const SocialLogin = ({ onGoogleClick, isLogin }: { onGoogleClick: () => void, is
         <Button
             type="button"
             variant="outline"
-            className="w-full rounded-[1.5rem] h-16 border-emerald-100/60 gap-4 font-bold text-emerald-950 hover:bg-emerald-50 hover:border-emerald-200 transition-all bg-white shadow-sm text-lg"
+            className="w-full rounded-[1.25rem] h-14 border-emerald-100/60 gap-4 font-bold text-emerald-950 hover:bg-emerald-50 hover:border-emerald-200 transition-all bg-white shadow-sm text-base"
             onClick={onGoogleClick}
         >
-            <svg className="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.33 0 3.305 2.722 1.34 6.707l3.926 3.058z" />
                 <path fill="#FBBC05" d="M1.34 6.707L5.266 9.765A7.062 7.062 0 0 0 4.909 12c0 .782.127 1.536.357 2.235L1.31 17.282A11.993 11.993 0 0 1 0 12c0-1.873.34-3.665.962-5.322l.378.029z" />
                 <path fill="#4285F4" d="M12 24c3.155 0 5.8-1.045 7.732-2.836l-3.778-3.091c-1.045.7-2.382 1.118-3.954 1.118-3.045 0-5.618-2.054-6.541-4.818L1.31 17.282C3.255 21.218 7.314 24 12 24z" />
@@ -331,7 +317,7 @@ const SocialLogin = ({ onGoogleClick, isLogin }: { onGoogleClick: () => void, is
             <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-emerald-100/50"></span>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-[0.3em] overflow-hidden">
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.3em] overflow-hidden">
                 <span className="bg-white px-6 text-emerald-950/20">or use your email</span>
             </div>
         </div>
