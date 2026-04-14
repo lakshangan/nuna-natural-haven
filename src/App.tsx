@@ -34,6 +34,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { CinematicPreloader } from "./components/CinematicPreloader";
 import { useState, useEffect } from "react";
+import { onMessageListener } from "./lib/firebase";
+import { toast } from "sonner";
 
 // Shared Loading Component
 const PageLoading = () => (
@@ -76,6 +78,25 @@ const App = () => {
     setContentRevealed(true);
     sessionStorage.setItem('preloader_shown', 'true');
   };
+
+  useEffect(() => {
+    const startFCMListener = () => {
+      onMessageListener()
+        .then((payload: any) => {
+          if (payload && payload.notification) {
+            toast.success(payload.notification.title, {
+              description: payload.notification.body,
+              duration: 5000,
+            });
+          }
+          // Recursively keep listening for new messages
+          startFCMListener();
+        })
+        .catch((err) => console.log('FCM failed: ', err));
+    };
+
+    startFCMListener();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
