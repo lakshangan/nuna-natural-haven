@@ -7,8 +7,8 @@ const firebaseConfig = {
   messagingSenderId: "438809052939",
   
   // ⚠️ YOU MUST REPLACE THESE WITH YOUR ACTUAL FIREBASE SECRETS
-  apiKey: "REPLACE_WITH_YOUR_FIREBASE_API_KEY",
-  appId: "REPLACE_WITH_YOUR_FIREBASE_APP_ID"
+  apiKey: "AIzaSyDXhsXlEXHTOxo8l_URl4PPyLX8mR5sqUk",
+  appId: "1:438809052939:web:804618f00c20aef8fe840e"
 };
 
 // Initialize Firebase
