@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useCart } from "@/contexts/CartContext";
 import { CheckCircle2, Package, ArrowRight, ShoppingBag } from "lucide-react";
 import confetti from "canvas-confetti";
 import { trackEvent } from "@/lib/analytics";
+import { requestForFcmToken } from "@/lib/firebase";
+import { BACKEND_URL } from "@/lib/api-config";
 
 const CheckoutSuccess = () => {
     const { clearCart, totalPrice, cart } = useCart();
@@ -27,8 +27,27 @@ const CheckoutSuccess = () => {
             });
         }
 
-        // Clear the cart immediately when this page loads
+        // 1. Clear the cart immediately when this page loads
         clearCart();
+
+        // 2. Setup Firebase Notifications for this purchase
+        const setupPushNotifications = async () => {
+            try {
+                const token = await requestForFcmToken();
+                if (token) {
+                    // Send to backend to trigger instant "Purchase Success" push notification
+                    await fetch(`${BACKEND_URL}/api/notifications/purchase`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: token })
+                    }).catch(console.error);
+                }
+            } catch (err) {
+                console.error("FCM failed", err);
+            }
+        };
+
+        setupPushNotifications();
 
         // Trigger a celebration!
         const duration = 3 * 1000;
