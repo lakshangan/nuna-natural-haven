@@ -2,6 +2,12 @@
 // If not set, we try to guess based on the current environment
 const getBackendUrl = () => {
     if (import.meta.env.VITE_BACKEND_URL) return import.meta.env.VITE_BACKEND_URL;
+    
+    // Auto-detect backend if running on Vercel/Production
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('nuna'))) {
+        return window.location.origin;
+    }
+    
     return 'http://localhost:5050';
 };
 
