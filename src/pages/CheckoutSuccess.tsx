@@ -10,8 +10,36 @@ import { trackEvent } from "@/lib/analytics";
 import { requestForFcmToken } from "@/lib/firebase";
 import { BACKEND_URL } from "@/lib/api-config";
 
+import { toast } from "sonner";
+import { onMessageListener } from "@/lib/firebase";
+
 const CheckoutSuccess = () => {
     const { clearCart, totalPrice, cart } = useCart();
+
+    const triggerTestNotification = async () => {
+        try {
+            toast.info("Requesting push manually...");
+            const token = await requestForFcmToken();
+            if (token) {
+                const res = await fetch(`${BACKEND_URL}/api/notifications/purchase`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                });
+                
+                if (res.ok) {
+                   toast.success("Backend API returned 200 OK!");
+                } else {
+                   toast.error(`Backend returned ${res.status}`);
+                }
+            } else {
+                toast.error("Could not grab Firebase Token");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Fetch failed entirely");
+        }
+    };
 
     useEffect(() => {
         // Track the purchase
@@ -116,6 +144,12 @@ const CheckoutSuccess = () => {
                                     <ArrowRight className="w-5 h-5" />
                                 </Button>
                             </Link>
+                        </div>
+                        
+                        <div className="mt-8 pt-6 border-t border-slate-100 flex justify-center">
+                            <Button onClick={triggerTestNotification} variant="outline" className="text-sm bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
+                                Debug: Trigger Push & Toast manually
+                            </Button>
                         </div>
                     </div>
 

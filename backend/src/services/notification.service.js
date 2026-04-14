@@ -3,14 +3,23 @@ import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 
+let serviceAccount;
+
 try {
-    const serviceAccount = require('../../serviceAccountKey.json');
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    } else if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+        serviceAccount = JSON.parse(Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('ascii'));
+    } else {
+        serviceAccount = require('../../serviceAccountKey.json');
+    }
+
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
     });
     console.log("🔥 Firebase Admin Initialized successfully");
 } catch (err) {
-    console.log("Firebase Admin not initialized yet. Needs serviceAccountKey.json", err);
+    console.warn("⚠️ Firebase Admin not initialized. Provide FIREBASE_SERVICE_ACCOUNT_JSON env var or serviceAccountKey.json file.");
 }
 
 export const sendPurchaseSuccessNotification = async (fcmToken) => {
