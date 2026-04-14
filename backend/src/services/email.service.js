@@ -2,9 +2,24 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Use a verified sender domain. For development/free tier, use your own registered email.
-// In production, update this to your verified Resend domain e.g. hello@nunaorganic.com
-const FROM_EMAIL = 'Nuna Organics <onboarding@resend.dev>';
+// ⚠️ Resend FREE TIER RESTRICTION:
+// When using onboarding@resend.dev as the sender, Resend only allows delivering
+// to the email address that owns the Resend account (your verified email).
+// To send to ANY email, you must add & verify a custom domain in Resend dashboard.
+// RESEND_VERIFIED_OWNER_EMAIL = your Resend account email (fallback for dev)
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Nuna Organics <onboarding@resend.dev>';
+const RESEND_OWNER_EMAIL = process.env.RESEND_OWNER_EMAIL || 'lakshanganesan05@gmail.com';
+const IS_PRODUCTION_DOMAIN = !FROM_EMAIL.includes('onboarding@resend.dev');
+
+// Helper: resolve recipient — in dev (no custom domain), always go to owner email
+const resolveRecipient = (requestedEmail) => {
+    if (IS_PRODUCTION_DOMAIN) return requestedEmail; // custom domain: send to real user
+    // Free tier: redirect all to verified owner, log a warning
+    if (requestedEmail !== RESEND_OWNER_EMAIL) {
+        console.warn(`[Email] ⚠️  DEV MODE: Resend free tier redirecting email for "${requestedEmail}" → "${RESEND_OWNER_EMAIL}". Add RESEND_FROM_EMAIL with a custom domain to send to real users.`);
+    }
+    return RESEND_OWNER_EMAIL;
+};
 
 /**
  * Sends a beautiful purchase confirmation email to the customer.
@@ -97,7 +112,7 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
     try {
         const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to: [toEmail],
+            to: [resolveRecipient(toEmail)],
             subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
             html
         });
@@ -182,7 +197,7 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
     try {
         const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to: [toEmail],
+            to: [resolveRecipient(toEmail)],
             subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
             html
         });
