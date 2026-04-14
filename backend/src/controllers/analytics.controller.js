@@ -2,10 +2,7 @@ import { supabase } from '../config/db.js';
 
 export const trackEvent = async (req, res) => {
     try {
-        const { event_name, event_data } = req.body;
-        
-        // This expects a 'cart_analytics' table in Supabase
-        // with columns: id (uuid), event_name (text), product_id (text), product_name (text), created_at
+        const { event_name, event_data, fcm_token } = req.body;
         
         const { error } = await supabase
             .from('analytics_events')
@@ -13,7 +10,8 @@ export const trackEvent = async (req, res) => {
                 event_name, 
                 product_id: event_data?.productId || null,
                 product_name: event_data?.name || null,
-                event_data: event_data || {}
+                event_data: event_data || {},
+                fcm_token: fcm_token || null
             }]);
 
         if (error) {
