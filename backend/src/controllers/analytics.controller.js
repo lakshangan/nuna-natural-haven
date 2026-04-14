@@ -2,7 +2,7 @@ import { supabase } from '../config/db.js';
 
 export const trackEvent = async (req, res) => {
     try {
-        const { event_name, event_data, fcm_token } = req.body;
+        const { event_name, event_data, fcm_token, user_email } = req.body;
         
         const { error } = await supabase
             .from('analytics_events')
@@ -11,12 +11,13 @@ export const trackEvent = async (req, res) => {
                 product_id: event_data?.productId || null,
                 product_name: event_data?.name || null,
                 event_data: event_data || {},
-                fcm_token: fcm_token || null
+                fcm_token: fcm_token || null,
+                user_email: user_email || null
             }]);
 
         if (error) {
-            console.error('Analytics Insert Error (May need table creation):', error.message);
-            // We return 200 anyway so we don't block the frontend
+            console.error('Analytics Insert Error:', error.message);
+            // Return 200 anyway so we don't block the frontend
             return res.status(200).json({ message: 'Event tracked (with warning)' });
         }
 
@@ -29,10 +30,6 @@ export const trackEvent = async (req, res) => {
 
 export const getCartInsights = async (req, res) => {
     try {
-        // Query to find how many times each product is in someone's cart
-        // We aggregate the 'add_to_cart' minus 'remove_from_cart' or purchase.
-        // For simplicity, we count total 'add_to_cart' events to show interest.
-        
         const { data, error } = await supabase
             .from('analytics_events')
             .select('product_id, product_name')
@@ -57,7 +54,6 @@ export const getCartInsights = async (req, res) => {
         }
 
         const sortedInsights = Object.values(insights).sort((a, b) => b.count - a.count);
-
         res.status(200).json(sortedInsights);
     } catch (error) {
         console.error('Cart Insights Error:', error);

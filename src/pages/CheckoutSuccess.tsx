@@ -1,104 +1,88 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Package, ArrowRight, ShoppingBag } from "lucide-react";
+import { CheckCircle2, Package, ArrowRight, ShoppingBag, Mail } from "lucide-react";
 import confetti from "canvas-confetti";
 import { trackEvent } from "@/lib/analytics";
 import { requestForFcmToken } from "@/lib/firebase";
 import { BACKEND_URL } from "@/lib/api-config";
 
-import { toast } from "sonner";
-import { onMessageListener } from "@/lib/firebase";
-
 const CheckoutSuccess = () => {
     const { clearCart, totalPrice, cart } = useCart();
-
-    const triggerTestNotification = async () => {
-        try {
-            toast.info("Requesting push manually...");
-            const token = await requestForFcmToken();
-            if (token) {
-                const res = await fetch(`${BACKEND_URL}/api/notifications/purchase`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token })
-                });
-                
-                if (res.ok) {
-                   toast.success("Backend API returned 200 OK!");
-                } else {
-                   toast.error(`Backend returned ${res.status}`);
-                }
-            } else {
-                toast.error("Could not grab Firebase Token");
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error("Fetch failed entirely");
-        }
-    };
+    const { user } = useAuth();
+    // Generate a stable order number once on mount
+    const orderNumber = useRef(`RN-${Math.floor(Math.random() * 90000) + 10000}`).current;
 
     useEffect(() => {
-        // Track the purchase
-        if (totalPrice > 0) {
+        // Snapshot the cart NOW (before clearCart wipes it)
+        const purchasedItems = cart.map(item => ({
+            item_id: item.id,
+            item_name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        }));
+        const purchaseTotal = totalPrice;
+
+        // Track the purchase event
+        if (purchaseTotal > 0) {
             trackEvent('purchase', {
-                transaction_id: `RN-${Math.floor(Math.random() * 90000) + 10000}`,
-                value: totalPrice,
+                transaction_id: orderNumber,
+                value: purchaseTotal,
                 currency: 'USD',
-                items: cart.map(item => ({
-                    item_id: item.id,
-                    item_name: item.name,
-                    price: item.price,
-                    quantity: item.quantity
-                }))
+                items: purchasedItems
             });
         }
 
-        // 1. Clear the cart immediately when this page loads
+        // Clear the cart
         clearCart();
 
-        // 2. Setup Firebase Notifications for this purchase
-        const setupPushNotifications = async () => {
+        // Fire purchase notifications (push + email)
+        const triggerNotifications = async () => {
             try {
-                const token = await requestForFcmToken();
-                if (token) {
-                    // Send to backend to trigger instant "Purchase Success" push notification
-                    await fetch(`${BACKEND_URL}/api/notifications/purchase`, {
+                const token = await requestForFcmToken().catch(() => null);
+                const email = user?.email || null;
+
+                // Only call the endpoint if we have at least one notification channel
+                if (token || email) {
+                    fetch(`${BACKEND_URL}/api/notifications/purchase`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: token })
+                        body: JSON.stringify({
+                            token,           // FCM push token (may be null)
+                            email,           // User email for confirmation email
+                            orderNumber,
+                            items: purchasedItems,
+                            totalPrice: purchaseTotal
+                        })
                     }).catch(console.error);
                 }
             } catch (err) {
-                console.error("FCM failed", err);
+                console.error("Notification setup failed", err);
             }
         };
 
-        setupPushNotifications();
+        triggerNotifications();
 
-        // Trigger a celebration!
+        // Confetti celebration 🎉
         const duration = 3 * 1000;
         const animationEnd = Date.now() + duration;
         const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
         const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-        const interval: any = setInterval(function () {
+        const interval: any = setInterval(() => {
             const timeLeft = animationEnd - Date.now();
-
-            if (timeLeft <= 0) {
-                return clearInterval(interval);
-            }
-
+            if (timeLeft <= 0) return clearInterval(interval);
             const particleCount = 50 * (timeLeft / duration);
-            // since particles fall down, start a bit higher than average
             confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
             confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
         }, 250);
-    }, []);
+
+        return () => clearInterval(interval);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -131,6 +115,17 @@ const CheckoutSuccess = () => {
                             </div>
                         </div>
 
+                        {user?.email && (
+                            <div className="flex items-center gap-3 text-left p-4 bg-green-50 border border-green-100 rounded-xl">
+                                <div className="bg-green-100 p-2 rounded-lg">
+                                    <Mail className="w-5 h-5 text-green-600" />
+                                </div>
+                                <p className="text-sm text-green-700">
+                                    A confirmation email has been sent to <strong>{user.email}</strong>
+                                </p>
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Link to="/shop">
                                 <Button variant="outline" className="w-full h-14 text-lg gap-2 rounded-xl">
@@ -145,16 +140,10 @@ const CheckoutSuccess = () => {
                                 </Button>
                             </Link>
                         </div>
-                        
-                        <div className="mt-8 pt-6 border-t border-slate-100 flex justify-center">
-                            <Button onClick={triggerTestNotification} variant="outline" className="text-sm bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
-                                Debug: Trigger Push & Toast manually
-                            </Button>
-                        </div>
                     </div>
 
                     <p className="text-sm text-muted-foreground italic">
-                        Order #RN-{Math.floor(Math.random() * 90000) + 10000}
+                        Order {orderNumber}
                     </p>
                 </div>
             </main>
