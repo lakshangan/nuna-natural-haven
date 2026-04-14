@@ -195,8 +195,22 @@ export const CartSheet = () => {
                                     countryCode: 'IN',
                                 },
                             }}
-                            onLoadPaymentData={() => {
+                            onLoadPaymentData={async () => {
                                 toast.success("Google Pay Authorized Successfully!");
+                                // Record order and trigger email
+                                try {
+                                    await fetch(`${BACKEND_URL}/api/orders/checkout`, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            items: cart,
+                                            total: totalPrice,
+                                            email: user?.email
+                                        }),
+                                    });
+                                } catch (err) {
+                                    console.error("Failed to record Google Pay order:", err);
+                                }
                                 navigate('/checkout-success');
                             }}
                             buttonColor="black"
@@ -212,9 +226,25 @@ export const CartSheet = () => {
                         </div>
 
                         <Button
-                            onClick={() => {
+                            onClick={async () => {
+                                // Record order and trigger email BEFORE redirecting to UPI
+                                try {
+                                    toast.loading("Initializing payment...");
+                                    await fetch(`${BACKEND_URL}/api/orders/checkout`, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            items: cart,
+                                            total: totalPrice,
+                                            email: user?.email
+                                        }),
+                                    });
+                                } catch (err) {
+                                    console.error("Failed to record UPI order:", err);
+                                }
+
                                 // Real UPI setup here
-                                const upiLink = `upi://pay?pa=examplemerchant@okhdfcbank&pn=Nuna%20Organics&am=${totalPrice.toFixed(2)}&cu=INR`;
+                                const upiLink = `upi://pay?pa=renukavelraj@okhdfcbank&pn=Nuna%20Organics&am=${totalPrice.toFixed(2)}&cu=INR`;
                                 window.location.href = upiLink;
 
                                 // Show fallback message if on desktop
