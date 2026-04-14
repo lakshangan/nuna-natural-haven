@@ -35,6 +35,8 @@ export const useProducts = () => {
             }
             return response.json() as Promise<Product[]>;
         },
+        staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+        gcTime: 1000 * 60 * 30, // Keep in garbage collection for 30 minutes
     });
 };
 
@@ -43,5 +45,6 @@ export const useProduct = (slug: string) => {
         queryKey: ['product', slug],
         queryFn: () => fetchProductBySlug(slug),
         enabled: !!slug,
+        staleTime: 1000 * 60 * 10, // Product details cache for 10 minutes
     });
 };

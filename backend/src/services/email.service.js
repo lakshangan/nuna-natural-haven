@@ -1,11 +1,15 @@
 import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-// Gmail SMTP transporter — free, no custom domain needed
-// Requires GMAIL_USER and GMAIL_APP_PASSWORD in .env
-// Get App Password from: myaccount.google.com → Security → App Passwords
+// Initialize Resend client
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+// Gmail SMTP transporter — fallback for local dev if Resend is not configured
 const createTransporter = () => {
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-        console.warn('[Email] ⚠️  GMAIL_USER or GMAIL_APP_PASSWORD not set in .env — emails will be skipped.');
+        if (!process.env.RESEND_API_KEY) {
+            console.warn('[Email] ⚠️  No email provider configured (Resend or Gmail). Email skipping.');
+        }
         return null;
     }
     return nodemailer.createTransport({
@@ -18,7 +22,8 @@ const createTransporter = () => {
 };
 
 const FROM_NAME = 'Nuna Organics 🌿';
-const getFrom = () => `"${FROM_NAME}" <${process.env.GMAIL_USER}>`;
+const getFrom = () => resend ? `Nuna Organics <onboarding@resend.dev>` : `"${FROM_NAME}" <${process.env.GMAIL_USER}>`;
+// Note: In production with Resend, you'd use a verified domain like contact@nunaorganics.com
 
 /**
  * Sends a beautiful purchase confirmation email to the customer.
@@ -112,13 +117,26 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
     </html>`;
 
     try {
-        const info = await transporter.sendMail({
-            from: getFrom(),
-            to: toEmail,
-            subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
-            html
-        });
-        console.log(`[Email] ✅ Purchase confirmation sent to ${toEmail} — Message ID: ${info.messageId}`);
+        if (resend) {
+            const { data, error } = await resend.emails.send({
+                from: getFrom(),
+                to: toEmail,
+                subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
+                html
+            });
+            if (error) throw error;
+            console.log(`[Email] ✅ Purchase confirmation sent via Resend: ${data.id}`);
+        } else {
+            const transporter = createTransporter();
+            if (!transporter) return;
+            const info = await transporter.sendMail({
+                from: getFrom(),
+                to: toEmail,
+                subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
+                html
+            });
+            console.log(`[Email] ✅ Purchase confirmation sent via Gmail: ${info.messageId}`);
+        }
     } catch (err) {
         console.error('[Email] ❌ Failed to send purchase confirmation:', err.message);
     }
@@ -198,13 +216,26 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
     </html>`;
 
     try {
-        const info = await transporter.sendMail({
-            from: getFrom(),
-            to: toEmail,
-            subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
-            html
-        });
-        console.log(`[Email] ✅ Abandoned cart email sent to ${toEmail} — Message ID: ${info.messageId}`);
+        if (resend) {
+            const { data, error } = await resend.emails.send({
+                from: getFrom(),
+                to: toEmail,
+                subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
+                html
+            });
+            if (error) throw error;
+            console.log(`[Email] ✅ Abandoned cart email sent via Resend: ${data.id}`);
+        } else {
+            const transporter = createTransporter();
+            if (!transporter) return;
+            const info = await transporter.sendMail({
+                from: getFrom(),
+                to: toEmail,
+                subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
+                html
+            });
+            console.log(`[Email] ✅ Abandoned cart email sent via Gmail: ${info.messageId}`);
+        }
     } catch (err) {
         console.error('[Email] ❌ Failed to send abandoned cart email:', err.message);
     }

@@ -7,10 +7,13 @@ export const getProducts = async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('products')
-            .select('*');
+            .select('id, name, slug, price, image_url, category, ingredients, description')
+            .order('created_at', { ascending: false });
 
         if (error) throw error;
 
+        // Add cache headers for better performance in production
+        res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=59');
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,6 +33,8 @@ export const getProductBySlug = async (req, res) => {
 
         if (error) throw error;
 
+        // Add cache headers for better performance
+        res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
         res.status(200).json(data);
     } catch (error) {
         res.status(404).json({ message: "Product not found" });

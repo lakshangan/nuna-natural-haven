@@ -62,10 +62,10 @@ router.post('/checkout', async (req, res) => {
             console.error('📧 Email failed but continuing checkout:', emailErr);
         }
 
-        // Return the local success URL
+        // Return the success URL
         res.status(200).json({
             success: true,
-            url: "http://localhost:8080/checkout-success",
+            url: `${process.env.FRONTEND_URL || 'http://localhost:8080'}/checkout-success`,
             orderId: order?.id
         });
     } catch (error) {
