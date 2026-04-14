@@ -1,15 +1,16 @@
 import admin from 'firebase-admin';
+import { createRequire } from 'module';
 
-// NOTE: You MUST download your Firebase Admin SDK serviceAccountKey.json 
-// from your Firebase Project Settings -> Service Accounts -> "Generate new private key"
-// and place it in the backend folder, or use environment variables!
+const require = createRequire(import.meta.url);
+
 try {
-    // For demonstration, we attempt to initialize with a file or placeholder.
-    // Replace this logic with your actual service account credential setup.
-    // import serviceAccount from '../../serviceAccountKey.json' assert { type: "json" };
-    // admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+    const serviceAccount = require('../../serviceAccountKey.json');
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("🔥 Firebase Admin Initialized successfully");
 } catch (err) {
-    console.log("Firebase Admin not initialized yet. Needs serviceAccountKey.json");
+    console.log("Firebase Admin not initialized yet. Needs serviceAccountKey.json", err);
 }
 
 export const sendPurchaseSuccessNotification = async (fcmToken) => {
