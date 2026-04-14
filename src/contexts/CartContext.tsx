@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 export interface CartItem {
   id: string | number;
@@ -34,6 +35,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cart]);
 
   const addItem = (item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
+    trackEvent('add_to_cart', {
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      value: item.price * quantity,
+      quantity
+    });
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.id === item.id);
       if (existingItem) {
@@ -46,6 +54,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const removeItem = (id: string | number) => {
+    const itemToRemove = cart.find(item => item.id === id);
+    if (itemToRemove) {
+      trackEvent('remove_from_cart', {
+        productId: itemToRemove.id,
+        name: itemToRemove.name,
+        price: itemToRemove.price,
+        quantity: itemToRemove.quantity,
+        value: itemToRemove.price * itemToRemove.quantity
+      });
+    }
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 

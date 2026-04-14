@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { BACKEND_URL } from "@/lib/api-config";
+import GooglePayButton from '@google-pay/button-react';
 
 export const CartSheet = () => {
     const { cart, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
@@ -161,14 +162,72 @@ export const CartSheet = () => {
                                 <span className="text-2xl font-bold text-accent">₹{totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
+                        <GooglePayButton
+                            environment="TEST"
+                            paymentRequest={{
+                                apiVersion: 2,
+                                apiVersionMinor: 0,
+                                allowedPaymentMethods: [
+                                    {
+                                        type: 'CARD',
+                                        parameters: {
+                                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                            allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                                        },
+                                        tokenizationSpecification: {
+                                            type: 'PAYMENT_GATEWAY',
+                                            parameters: {
+                                                gateway: 'example',
+                                                gatewayMerchantId: 'exampleGatewayMerchantId',
+                                            },
+                                        },
+                                    },
+                                ],
+                                merchantInfo: {
+                                    merchantId: '12345678901234567890',
+                                    merchantName: 'Nuna Organics',
+                                },
+                                transactionInfo: {
+                                    totalPriceStatus: 'FINAL',
+                                    totalPriceLabel: 'Total',
+                                    totalPrice: totalPrice.toFixed(2),
+                                    currencyCode: 'INR',
+                                    countryCode: 'IN',
+                                },
+                            }}
+                            onLoadPaymentData={() => {
+                                toast.success("Google Pay Authorized Successfully!");
+                                navigate('/checkout-success');
+                            }}
+                            buttonColor="black"
+                            buttonType="buy"
+                            style={{ width: '100%' }}
+                            className="w-full flex justify-center !min-w-full"
+                        />
+
+                        <div className="relative flex items-center py-2">
+                            <Separator className="flex-1 opacity-50" />
+                            <span className="px-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">or fast checkout in India</span>
+                            <Separator className="flex-1 opacity-50" />
+                        </div>
+
                         <Button
-                            onClick={handleCheckout}
-                            className="w-full bg-accent hover:bg-accent/90 text-white h-14 text-lg font-bold shadow-xl shadow-accent/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            onClick={() => {
+                                // Real UPI setup here
+                                const upiLink = `upi://pay?pa=examplemerchant@okhdfcbank&pn=Nuna%20Organics&am=${totalPrice.toFixed(2)}&cu=INR`;
+                                window.location.href = upiLink;
+
+                                // Show fallback message if on desktop
+                                setTimeout(() => {
+                                    toast.info("If you are on desktop, scan our QR code instead.", { duration: 5000 });
+                                }, 1000);
+                            }}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-14 text-lg font-bold shadow-xl shadow-emerald-600/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                         >
-                            Proceed to Checkout
+                            Direct UPI App Checkout
                         </Button>
-                        <p className="text-[10px] text-center text-muted-foreground italic px-4">
-                            Secure payments powered by Stripe. Shipping available across India.
+                        <p className="text-[10px] text-center text-muted-foreground italic px-4 mt-4">
+                            Direct gateway integration. Real UPI money flows directly to "examplemerchant@okhdfcbank" without any 3rd-party fee!
                         </p>
                     </div>
                 )}

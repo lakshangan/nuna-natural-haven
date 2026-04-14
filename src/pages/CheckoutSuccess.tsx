@@ -6,11 +6,27 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle2, Package, ArrowRight, ShoppingBag } from "lucide-react";
 import confetti from "canvas-confetti";
+import { trackEvent } from "@/lib/analytics";
 
 const CheckoutSuccess = () => {
-    const { clearCart } = useCart();
+    const { clearCart, totalPrice, cart } = useCart();
 
     useEffect(() => {
+        // Track the purchase
+        if (totalPrice > 0) {
+            trackEvent('purchase', {
+                transaction_id: `RN-${Math.floor(Math.random() * 90000) + 10000}`,
+                value: totalPrice,
+                currency: 'USD',
+                items: cart.map(item => ({
+                    item_id: item.id,
+                    item_name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                }))
+            });
+        }
+
         // Clear the cart immediately when this page loads
         clearCart();
 

@@ -42,6 +42,7 @@ export const AdminDashboard = () => {
         totalProducts: 0,
         recentOrders: []
     });
+    const [cartInsights, setCartInsights] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -53,11 +54,23 @@ export const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-            const response = await fetch(`${BACKEND_URL}/api/admin/stats`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await response.json();
-            setRealStats(data);
+            
+            const [statsRes, insightsRes] = await Promise.all([
+                fetch(`${BACKEND_URL}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }),
+                fetch(`${BACKEND_URL}/api/analytics/insights`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }).catch(() => null)
+            ]);
+
+            const statsData = await statsRes.json();
+            setRealStats(statsData);
+
+            if (insightsRes && insightsRes.ok) {
+                const insightsData = await insightsRes.json();
+                setCartInsights(insightsData);
+            }
         } catch (error) {
             console.error('Failed to fetch stats');
         } finally {
@@ -178,6 +191,38 @@ export const AdminDashboard = () => {
                     <Link to="/admin/orders" className="block w-full mt-8 py-3 text-center text-sm font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors">
                         View All Orders
                     </Link>
+                </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl border border-emerald-50 shadow-sm mt-8">
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <ShoppingBag className="w-5 h-5 text-emerald-600" />
+                            Active Cart Insights
+                        </h3>
+                        <p className="text-sm text-slate-500">Track which products users are adding to cart but haven't purchased yet.</p>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {cartInsights.length === 0 ? (
+                            <p className="text-slate-500 text-sm py-4 col-span-full text-center">No active cart data tracked yet.</p>
+                    ) : (
+                        cartInsights.map((insight: any) => (
+                            <div key={insight.id} className="border border-slate-100 p-5 rounded-2xl flex flex-col relative group hover:border-emerald-200 hover:shadow-md transition-all">
+                                <div className="absolute top-4 right-4 bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-1 rounded-md">
+                                    {insight.count} ADDED
+                                </div>
+                                <h4 className="font-bold text-slate-900 mt-2 pr-16">{insight.name}</h4>
+                                <p className="text-xs text-slate-500 mt-1 mb-4">High intent users</p>
+                                <div className="mt-auto">
+                                    <button className="w-full text-sm font-bold bg-slate-900 text-white px-4 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors">
+                                        Create CTA / Offer
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>

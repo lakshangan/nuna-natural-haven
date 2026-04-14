@@ -20,7 +20,7 @@ const productData: Record<string, any> = {
   "nourishing-hair-oil": {
     id: 1,
     name: "Nourishing Hair Oil",
-    price: 32,
+    price: 2,
     images: [product1, gallery1, gallery2],
     shortDescription: "Deep conditioning treatment for all hair types",
     fullDescription:
@@ -59,7 +59,7 @@ const productData: Record<string, any> = {
   "soothing-face-cream": {
     id: 2,
     name: "Soothing Face Cream",
-    price: 42,
+    price: 1,
     images: [product2, gallery1, gallery2],
     shortDescription: "Gentle hydration for sensitive skin",
     fullDescription:
@@ -92,7 +92,7 @@ const productData: Record<string, any> = {
   "healing-body-butter": {
     id: 3,
     name: "Healing Body Butter",
-    price: 38,
+    price: 1,
     images: [product3, gallery1, gallery2],
     shortDescription: "Rich moisture for dry skin",
     fullDescription:
