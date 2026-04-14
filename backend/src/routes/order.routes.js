@@ -1,5 +1,5 @@
 import express from 'express';
-import { sendOrderConfirmationEmail } from '../services/email.service.js';
+import { sendPurchaseConfirmationEmail } from '../services/email.service.js';
 import { supabase } from '../config/db.js';
 import { protect } from '../middleware/auth.middleware.js';
 
@@ -51,9 +51,10 @@ router.post('/checkout', async (req, res) => {
         // 📧 Triggering email
         try {
             if (email) {
-                await sendOrderConfirmationEmail(email, {
+                await sendPurchaseConfirmationEmail({
+                    toEmail: email,
                     items,
-                    total,
+                    totalPrice: total,
                     orderNumber: order ? `RN-${order.id}` : `RN-${Math.floor(10000 + Math.random() * 90000)}`
                 });
             }
@@ -83,16 +84,16 @@ router.post('/test-email', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const result = await sendOrderConfirmationEmail(email, {
-        items: [{ name: "Sample Lavender Oil", quantity: 1, price: 20 }],
-        total: 20,
-        orderNumber: "TEST-12345"
-    });
-
-    if (result.success) {
+    try {
+        await sendPurchaseConfirmationEmail({
+            toEmail: email,
+            items: [{ name: "Sample Lavender Oil", quantity: 1, price: 20 }],
+            totalPrice: 20,
+            orderNumber: "TEST-12345"
+        });
         res.status(200).json({ message: "Test email sent successfully!" });
-    } else {
-        res.status(500).json({ message: "Failed to send email", error: result.error });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to send email", error: error.message });
     }
 });
 
