@@ -162,112 +162,125 @@ export const CartSheet = () => {
                                 <span className="text-2xl font-bold text-accent">₹{totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
-                        <GooglePayButton
-                            environment="TEST"
-                            paymentRequest={{
-                                apiVersion: 2,
-                                apiVersionMinor: 0,
-                                allowedPaymentMethods: [
-                                    {
-                                        type: 'CARD',
-                                        parameters: {
-                                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                                            allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                                        },
-                                        tokenizationSpecification: {
-                                            type: 'PAYMENT_GATEWAY',
-                                            parameters: {
-                                                gateway: 'example',
-                                                gatewayMerchantId: 'exampleGatewayMerchantId',
+
+                        {!user ? (
+                            <div className="space-y-4 pt-4 animate-reveal">
+                                <div className="p-4 bg-accent/5 border border-accent/20 rounded-xl text-center">
+                                    <p className="text-sm text-primary/80 mb-3">
+                                        Sign in to complete your purchase and track your order.
+                                    </p>
+                                    <Button 
+                                        onClick={() => navigate("/auth")}
+                                        className="w-full bg-accent hover:bg-accent/90 text-white font-bold h-12"
+                                    >
+                                        Sign In to Checkout
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <GooglePayButton
+                                    environment="TEST"
+                                    paymentRequest={{
+                                        apiVersion: 2,
+                                        apiVersionMinor: 0,
+                                        allowedPaymentMethods: [
+                                            {
+                                                type: 'CARD',
+                                                parameters: {
+                                                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                                    allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                                                },
+                                                tokenizationSpecification: {
+                                                    type: 'PAYMENT_GATEWAY',
+                                                    parameters: {
+                                                        gateway: 'example',
+                                                        gatewayMerchantId: 'exampleGatewayMerchantId',
+                                                    },
+                                                },
                                             },
+                                        ],
+                                        merchantInfo: {
+                                            merchantId: '12345678901234567890',
+                                            merchantName: 'Nuna Organics',
                                         },
-                                    },
-                                ],
-                                merchantInfo: {
-                                    merchantId: '12345678901234567890',
-                                    merchantName: 'Nuna Organics',
-                                },
-                                transactionInfo: {
-                                    totalPriceStatus: 'FINAL',
-                                    totalPriceLabel: 'Total',
-                                    totalPrice: totalPrice.toFixed(2),
-                                    currencyCode: 'INR',
-                                    countryCode: 'IN',
-                                },
-                            }}
-                            onLoadPaymentData={async () => {
-                                if (!user) {
-                                    toast.error("Please login to complete your purchase.");
-                                    navigate("/auth");
-                                    return;
-                                }
+                                        transactionInfo: {
+                                            totalPriceStatus: 'FINAL',
+                                            totalPriceLabel: 'Total',
+                                            totalPrice: totalPrice.toFixed(2),
+                                            currencyCode: 'INR',
+                                            countryCode: 'IN',
+                                        },
+                                    }}
+                                    onLoadPaymentData={async () => {
+                                        toast.success("Google Pay Authorized Successfully!");
+                                        // Record order and trigger email
+                                        try {
+                                            await fetch(`${BACKEND_URL}/api/orders/checkout`, {
+                                                method: "POST",
+                                                headers: { 
+                                                    "Content-Type": "application/json",
+                                                    "Authorization": `Bearer ${localStorage.getItem('token')}` // Ensure token is sent
+                                                },
+                                                body: JSON.stringify({
+                                                    items: cart,
+                                                    total: totalPrice,
+                                                    email: user?.email
+                                                }),
+                                            });
+                                        } catch (err) {
+                                            console.error("Failed to record Google Pay order:", err);
+                                        }
+                                        navigate('/checkout-success');
+                                    }}
+                                    buttonColor="black"
+                                    buttonType="buy"
+                                    style={{ width: '100%' }}
+                                    className="w-full flex justify-center !min-w-full"
+                                />
 
-                                toast.success("Google Pay Authorized Successfully!");
-                                // Record order and trigger email
-                                try {
-                                    await fetch(`${BACKEND_URL}/api/orders/checkout`, {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({
-                                            items: cart,
-                                            total: totalPrice,
-                                            email: user?.email
-                                        }),
-                                    });
-                                } catch (err) {
-                                    console.error("Failed to record Google Pay order:", err);
-                                }
-                                navigate('/checkout-success');
-                            }}
-                            buttonColor="black"
-                            buttonType="buy"
-                            style={{ width: '100%' }}
-                            className="w-full flex justify-center !min-w-full"
-                        />
+                                <div className="relative flex items-center py-2">
+                                    <Separator className="flex-1 opacity-50" />
+                                    <span className="px-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">or fast checkout in India</span>
+                                    <Separator className="flex-1 opacity-50" />
+                                </div>
 
-                        <div className="relative flex items-center py-2">
-                            <Separator className="flex-1 opacity-50" />
-                            <span className="px-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">or fast checkout in India</span>
-                            <Separator className="flex-1 opacity-50" />
-                        </div>
+                                <Button
+                                    onClick={async () => {
+                                        // Record order and trigger email BEFORE redirecting to UPI
+                                        try {
+                                            toast.loading("Initializing payment...");
+                                            await fetch(`${BACKEND_URL}/api/orders/checkout`, {
+                                                method: "POST",
+                                                headers: { 
+                                                    "Content-Type": "application/json",
+                                                    "Authorization": `Bearer ${localStorage.getItem('token')}` // Ensure token is sent
+                                                },
+                                                body: JSON.stringify({
+                                                    items: cart,
+                                                    total: totalPrice,
+                                                    email: user?.email
+                                                }),
+                                            });
+                                        } catch (err) {
+                                            console.error("Failed to record UPI order:", err);
+                                        }
 
-                        <Button
-                            onClick={async () => {
-                                if (!user) {
-                                    toast.error("Please login to proceed with UPI payment.");
-                                    navigate("/auth");
-                                    return;
-                                }
+                                        // Real UPI setup here
+                                        const upiLink = `upi://pay?pa=renukavelraj@okhdfcbank&pn=Nuna%20Organics&am=${totalPrice.toFixed(2)}&cu=INR`;
+                                        window.location.href = upiLink;
 
-                                // Record order and trigger email BEFORE redirecting to UPI
-                                try {
-                                    toast.loading("Initializing payment...");
-                                    await fetch(`${BACKEND_URL}/api/orders/checkout`, {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({
-                                            items: cart,
-                                            total: totalPrice,
-                                            email: user?.email
-                                        }),
-                                    });
-                                } catch (err) {
-                                    console.error("Failed to record UPI order:", err);
-                                }
-
-                                // Real UPI setup here
-                                const upiLink = `upi://pay?pa=renukavelraj@okhdfcbank&pn=Nuna%20Organics&am=${totalPrice.toFixed(2)}&cu=INR`;
-                                window.location.href = upiLink;
-
-                                // Show fallback message if on desktop
-                                setTimeout(() => {
-                                    toast.info("If you are on desktop, scan our QR code instead.", { duration: 5000 });
-                                }, 1000);
-                            }}
-                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-14 text-lg font-bold shadow-xl shadow-emerald-600/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                            Direct UPI App Checkout
-                        </Button>
+                                        // Show fallback message if on desktop
+                                        setTimeout(() => {
+                                            toast.info("If you are on desktop, scan our QR code instead.", { duration: 5000 });
+                                        }, 1000);
+                                    }}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-14 text-lg font-bold shadow-xl shadow-emerald-600/20 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    Direct UPI App Checkout
+                                </Button>
+                            </>
+                        )}
                         <p className="text-[10px] text-center text-muted-foreground italic px-4 mt-4">
                             Direct gateway integration. Real UPI money flows directly to "examplemerchant@okhdfcbank" without any 3rd-party fee!
                         </p>

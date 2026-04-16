@@ -1,5 +1,4 @@
 import { supabase } from './config/db.js';
-import { sendAbandonedCartNotification } from './services/notification.service.js';
 import { sendAbandonedCartEmail } from './services/email.service.js';
 
 // This function will run periodically to check for abandoned carts
@@ -27,19 +26,11 @@ export const startCronJobs = () => {
             if (error) throw error;
 
             if (data && data.length > 0) {
-                console.log(`Found ${data.length} abandoned cart events to notify.`);
+                console.log(`Found ${data.length} abandoned cart events to check.`);
                 
-                // Use a Set to avoid notifying the same user multiple times per sweep
-                const notifiedTokens = new Set();
                 const notifiedEmails = new Set();
                 
                 for (let event of data) {
-                    // Send push notification if FCM token exists
-                    if (event.fcm_token && !notifiedTokens.has(event.fcm_token)) {
-                        await sendAbandonedCartNotification(event.fcm_token, event.product_name);
-                        notifiedTokens.add(event.fcm_token);
-                    }
-                    
                     // Send abandoned cart EMAIL if user_email exists
                     if (event.user_email && !notifiedEmails.has(event.user_email)) {
                         await sendAbandonedCartEmail({
@@ -50,7 +41,7 @@ export const startCronJobs = () => {
                     }
                 }
 
-                console.log(`✅ Notified ${notifiedTokens.size} via push, ${notifiedEmails.size} via email.`);
+                console.log(`✅ Notified ${notifiedEmails.size} users via email.`);
             } else {
                 console.log("No abandoned carts found in the 24 hour window.");
             }

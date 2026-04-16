@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Package, ArrowRight, ShoppingBag, Mail } from "lucide-react";
 import confetti from "canvas-confetti";
 import { trackEvent } from "@/lib/analytics";
-import { requestForFcmToken } from "@/lib/firebase";
 import { BACKEND_URL } from "@/lib/api-config";
 
 const CheckoutSuccess = () => {
@@ -39,33 +38,6 @@ const CheckoutSuccess = () => {
 
         // Clear the cart
         clearCart();
-
-        // Fire purchase notifications (push + email)
-        const triggerNotifications = async () => {
-            try {
-                const token = await requestForFcmToken().catch(() => null);
-                const email = user?.email || null;
-
-                // Only call the endpoint if we have at least one notification channel
-                if (token || email) {
-                    fetch(`${BACKEND_URL}/api/notifications/purchase`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            token,           // FCM push token (may be null)
-                            email,           // User email for confirmation email
-                            orderNumber,
-                            items: purchasedItems,
-                            totalPrice: purchaseTotal
-                        })
-                    }).catch(console.error);
-                }
-            } catch (err) {
-                console.error("Notification setup failed", err);
-            }
-        };
-
-        triggerNotifications();
 
         // Confetti celebration 🎉
         const duration = 3 * 1000;
