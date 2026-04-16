@@ -31,14 +31,14 @@ const getFrom = () => resend ? `Nuna Organics <onboarding@resend.dev>` : `"${FRO
 export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, items, totalPrice }) => {
     if (!toEmail) return;
 
-    const transporter = createTransporter();
-    if (!transporter) return;
+    // Use ₹ instead of $ for Indian market as per frontend
+    const currencySymbol = '₹';
 
     const itemRows = (items || []).map(item => `
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-family: Georgia, serif; font-size: 15px; color: #333;">${item.item_name || item.name}</td>
             <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; text-align: center; color: #666; font-size: 14px;">${item.quantity || 1}</td>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #333; font-size: 14px;">$${Number(item.price || 0).toFixed(2)}</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #333; font-size: 14px;">${currencySymbol}${Number(item.price || 0).toFixed(2)}</td>
         </tr>
     `).join('');
 
@@ -88,7 +88,7 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
                                     <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 16px; border-top: 2px solid #e8e0d0; padding-top: 12px;">
                                         <tr>
                                             <td style="font-size: 16px; font-weight: bold; color: #2d5016; font-family: Georgia, serif;">Total</td>
-                                            <td style="text-align: right; font-size: 20px; font-weight: bold; color: #2d5016; font-family: Georgia, serif;">$${Number(totalPrice || 0).toFixed(2)}</td>
+                                            <td style="text-align: right; font-size: 20px; font-weight: bold; color: #2d5016; font-family: Georgia, serif;">${currencySymbol}${Number(totalPrice || 0).toFixed(2)}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -118,17 +118,25 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
 
     try {
         if (resend) {
+            console.log(`[Email] Attempting to send via Resend to: ${toEmail}`);
             const { data, error } = await resend.emails.send({
                 from: getFrom(),
                 to: toEmail,
                 subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
                 html
             });
-            if (error) throw error;
+            if (error) {
+                console.error('[Email] Resend Error:', error);
+                throw error;
+            }
             console.log(`[Email] ✅ Purchase confirmation sent via Resend: ${data.id}`);
-        } else {
-            const transporter = createTransporter();
-            if (!transporter) return;
+            return; // Success
+        }
+
+        // Fallback or Direct Gmail
+        const transporter = createTransporter();
+        if (transporter) {
+            console.log(`[Email] Attempting to send via Gmail to: ${toEmail}`);
             const info = await transporter.sendMail({
                 from: getFrom(),
                 to: toEmail,
@@ -136,9 +144,30 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
                 html
             });
             console.log(`[Email] ✅ Purchase confirmation sent via Gmail: ${info.messageId}`);
+        } else {
+            console.warn('[Email] ❌ No email provider available to send confirmation.');
         }
     } catch (err) {
         console.error('[Email] ❌ Failed to send purchase confirmation:', err.message);
+        
+        // If Resend failed, try Gmail as emergency fallback if it exists
+        if (resend && process.env.GMAIL_USER) {
+            try {
+                console.log('[Email] 🔄 Resend failed, trying Gmail fallback...');
+                const transporter = createTransporter();
+                if (transporter) {
+                    await transporter.sendMail({
+                        from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+                        to: toEmail,
+                        subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
+                        html
+                    });
+                    console.log('[Email] ✅ Fallback Gmail success!');
+                }
+            } catch (fallbackErr) {
+                console.error('[Email] ❌ Fallback Gmail also failed:', fallbackErr.message);
+            }
+        }
     }
 };
 
@@ -147,9 +176,6 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
  */
 export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
     if (!toEmail) return;
-
-    const transporter = createTransporter();
-    if (!transporter) return;
 
     const shopUrl = `${process.env.FRONTEND_URL || 'https://nuna-natural-haven.vercel.app'}/shop`;
 
@@ -217,6 +243,7 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
 
     try {
         if (resend) {
+            console.log(`[Email] Sending abandoned cart via Resend to: ${toEmail}`);
             const { data, error } = await resend.emails.send({
                 from: getFrom(),
                 to: toEmail,
@@ -225,10 +252,12 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
             });
             if (error) throw error;
             console.log(`[Email] ✅ Abandoned cart email sent via Resend: ${data.id}`);
-        } else {
-            const transporter = createTransporter();
-            if (!transporter) return;
-            const info = await transporter.sendMail({
+            return;
+        }
+
+        const transporter = createTransporter();
+        if (transporter) {
+            await transporter.sendMail({
                 from: getFrom(),
                 to: toEmail,
                 subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
@@ -238,5 +267,21 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
         }
     } catch (err) {
         console.error('[Email] ❌ Failed to send abandoned cart email:', err.message);
+        
+        // Gmail Fallback
+        if (resend && process.env.GMAIL_USER) {
+            try {
+                const transporter = createTransporter();
+                if (transporter) {
+                    await transporter.sendMail({
+                        from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+                        to: toEmail,
+                        subject: `🛒 Reminder: Your ${productName || 'item'} is waiting`,
+                        html
+                    });
+                    console.log('[Email] ✅ Abandoned cart fallback success!');
+                }
+            } catch (fail) {}
+        }
     }
 };

@@ -196,6 +196,12 @@ export const CartSheet = () => {
                                 },
                             }}
                             onLoadPaymentData={async () => {
+                                if (!user) {
+                                    toast.error("Please login to complete your purchase.");
+                                    navigate("/auth");
+                                    return;
+                                }
+
                                 toast.success("Google Pay Authorized Successfully!");
                                 // Record order and trigger email
                                 try {
@@ -227,6 +233,12 @@ export const CartSheet = () => {
 
                         <Button
                             onClick={async () => {
+                                if (!user) {
+                                    toast.error("Please login to proceed with UPI payment.");
+                                    navigate("/auth");
+                                    return;
+                                }
+
                                 // Record order and trigger email BEFORE redirecting to UPI
                                 try {
                                     toast.loading("Initializing payment...");

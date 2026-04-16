@@ -24,7 +24,7 @@ router.get('/my-orders', protect, async (req, res) => {
 
 // @desc    Create a Stripe Checkout Session
 // @route   POST /api/orders/checkout
-router.post('/checkout', async (req, res) => {
+router.post('/checkout', protect, async (req, res) => {
     try {
         const { items, total, email } = req.body;
 
