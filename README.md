@@ -1,4 +1,4 @@
-# 🌿 Nuna Organics (Renu's Natural Haven)
+# 🌿 Nuna Organics(Natural organic skin care products)
 
 A premium, high-performance E-commerce platform for botanical skincare and natural wellness products. Built with a focus on cinematic aesthetics, robust security, and seamless user experience.
 
@@ -81,5 +81,6 @@ A premium, high-performance E-commerce platform for botanical skincare and natur
 ## 📈 Monitoring & Scalability
 - **Vercel Analytics**: Built-in tracking for user events and performance.
 - **Performance Caching**: Edge caching headers implemented for product data to ensure lightning-fast load times globally.
+git push
 - **Modular Routes**: Easy to expand with new botanical categories or administrative features.
 *Developed with ❤️ for Nuna Organics*
