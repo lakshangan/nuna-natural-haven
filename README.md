@@ -82,11 +82,4 @@ A premium, high-performance E-commerce platform for botanical skincare and natur
 - **Vercel Analytics**: Built-in tracking for user events and performance.
 - **Performance Caching**: Edge caching headers implemented for product data to ensure lightning-fast load times globally.
 - **Modular Routes**: Easy to expand with new botanical categories or administrative features.
-
----
-
-## 👩‍🌾 Founder's Vision
-"Renu's Natural Haven is more than a shop; it's a digital sanctuary for those seeking the purest forms of nature's care. Every line of code is written to reflect the quality of our botanical extracts."
-
----
 *Developed with ❤️ for Nuna Organics*
