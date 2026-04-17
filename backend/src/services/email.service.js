@@ -1,29 +1,16 @@
 import nodemailer from 'nodemailer';
-import { Resend } from 'resend';
 
-// Initialize Resend client
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-
-// Gmail SMTP transporter — fallback for local dev if Resend is not configured
-const createTransporter = () => {
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-        if (!process.env.RESEND_API_KEY) {
-            console.warn('[Email] ⚠️  No email provider configured (Resend or Gmail). Email skipping.');
-        }
-        return null;
+// Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
     }
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD,
-        }
-    });
-};
+});
 
 const FROM_NAME = 'Nuna Organics 🌿';
-const getFrom = () => resend ? `Nuna Organics <onboarding@resend.dev>` : `"${FROM_NAME}" <${process.env.GMAIL_USER}>`;
-// Note: In production with Resend, you'd use a verified domain like contact@nunaorganics.com
+const getFrom = () => `"${FROM_NAME}" <${process.env.GMAIL_USER}>`;
 
 /**
  * Sends a beautiful purchase confirmation email to the customer.
@@ -31,7 +18,7 @@ const getFrom = () => resend ? `Nuna Organics <onboarding@resend.dev>` : `"${FRO
 export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, items, totalPrice }) => {
     if (!toEmail) return;
 
-    // Use ₹ instead of $ for Indian market as per frontend
+    // Use ₹ instead of $ for Indian market
     const currencySymbol = '₹';
 
     const itemRows = (items || []).map(item => `
@@ -117,57 +104,16 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
     </html>`;
 
     try {
-        if (resend) {
-            console.log(`[Email] Attempting to send via Resend to: ${toEmail}`);
-            const { data, error } = await resend.emails.send({
-                from: getFrom(),
-                to: toEmail,
-                subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
-                html
-            });
-            if (error) {
-                console.error('[Email] Resend Error:', error);
-                throw error;
-            }
-            console.log(`[Email] ✅ Purchase confirmation sent via Resend: ${data.id}`);
-            return; // Success
-        }
-
-        // Fallback or Direct Gmail
-        const transporter = createTransporter();
-        if (transporter) {
-            console.log(`[Email] Attempting to send via Gmail to: ${toEmail}`);
-            const info = await transporter.sendMail({
-                from: getFrom(),
-                to: toEmail,
-                subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
-                html
-            });
-            console.log(`[Email] ✅ Purchase confirmation sent via Gmail: ${info.messageId}`);
-        } else {
-            console.warn('[Email] ❌ No email provider available to send confirmation.');
-        }
+        console.log(`[Email] Attempting to send via Gmail to: ${toEmail}`);
+        const info = await transporter.sendMail({
+            from: getFrom(),
+            to: toEmail,
+            subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
+            html
+        });
+        console.log(`[Email] ✅ Purchase confirmation sent via Gmail: ${info.messageId}`);
     } catch (err) {
         console.error('[Email] ❌ Failed to send purchase confirmation:', err.message);
-        
-        // If Resend failed, try Gmail as emergency fallback if it exists
-        if (resend && process.env.GMAIL_USER) {
-            try {
-                console.log('[Email] 🔄 Resend failed, trying Gmail fallback...');
-                const transporter = createTransporter();
-                if (transporter) {
-                    await transporter.sendMail({
-                        from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
-                        to: toEmail,
-                        subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
-                        html
-                    });
-                    console.log('[Email] ✅ Fallback Gmail success!');
-                }
-            } catch (fallbackErr) {
-                console.error('[Email] ❌ Fallback Gmail also failed:', fallbackErr.message);
-            }
-        }
     }
 };
 
@@ -242,46 +188,16 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
     </html>`;
 
     try {
-        if (resend) {
-            console.log(`[Email] Sending abandoned cart via Resend to: ${toEmail}`);
-            const { data, error } = await resend.emails.send({
-                from: getFrom(),
-                to: toEmail,
-                subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
-                html
-            });
-            if (error) throw error;
-            console.log(`[Email] ✅ Abandoned cart email sent via Resend: ${data.id}`);
-            return;
-        }
-
-        const transporter = createTransporter();
-        if (transporter) {
-            await transporter.sendMail({
-                from: getFrom(),
-                to: toEmail,
-                subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
-                html
-            });
-            console.log(`[Email] ✅ Abandoned cart email sent via Gmail: ${info.messageId}`);
-        }
+        console.log(`[Email] Sending abandoned cart via Gmail to: ${toEmail}`);
+        const info = await transporter.sendMail({
+            from: getFrom(),
+            to: toEmail,
+            subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
+            html
+        });
+        console.log(`[Email] ✅ Abandoned cart email sent via Gmail: ${info.messageId}`);
     } catch (err) {
         console.error('[Email] ❌ Failed to send abandoned cart email:', err.message);
-        
-        // Gmail Fallback
-        if (resend && process.env.GMAIL_USER) {
-            try {
-                const transporter = createTransporter();
-                if (transporter) {
-                    await transporter.sendMail({
-                        from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
-                        to: toEmail,
-                        subject: `🛒 Reminder: Your ${productName || 'item'} is waiting`,
-                        html
-                    });
-                    console.log('[Email] ✅ Abandoned cart fallback success!');
-                }
-            } catch (fail) {}
-        }
     }
 };
+
