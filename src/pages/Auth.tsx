@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, User as UserIcon, Eye, EyeOff, ArrowRight, Sparkles, Sprout, Leaf } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Eye, EyeOff, ArrowRight, Sprout, Leaf } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -68,47 +68,15 @@ const Auth = () => {
                 <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-16 xl:gap-32 items-center">
 
                     {/* Brand Story (Desktop) */}
-                    <div className="hidden lg:flex flex-col space-y-12 animate-in fade-in slide-in-from-left-10 duration-1000">
-                        <div className="space-y-8">
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/50 text-emerald-800 text-[10px] font-black tracking-[0.2em] uppercase border border-emerald-200/30"
-                            >
-                                <Sparkles className="w-3.5 h-3.5" />
-                                Nuna Origin Collective
-                            </motion.div>
-                            <h1 className="text-6xl xl:text-7xl font-heading font-extrabold text-emerald-950 leading-[0.95] tracking-tight">
-                                Pure Rituals <br />
-                                <span className="text-accent italic font-serif serif">For Your Soul</span>
-                            </h1>
-                            <p className="text-lg xl:text-xl text-emerald-900/60 max-w-md leading-relaxed font-medium">
-                                Join our collective of botanical enthusiasts and discover nature's most potent transformations.
-                            </p>
-                        </div>
-
-                        <div className="grid gap-4 max-w-md">
-                            {[
-                                { icon: Leaf, title: "Pure Ingredients", desc: "100% Organic & Certified" },
-                                { icon: Sprout, title: "Sustainable Living", desc: "Eco-conscious packaging" }
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.5 + (i * 0.1) }}
-                                    className="flex items-center gap-6 p-4 rounded-[2rem] bg-white/60 backdrop-blur-md border border-white shadow-sm hover:shadow-md transition-all group"
-                                >
-                                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                                        <item.icon className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-emerald-950 text-base">{item.title}</h4>
-                                        <p className="text-sm text-emerald-900/50 font-medium">{item.desc}</p>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
+                    <div className="hidden lg:flex flex-col items-center justify-center animate-in fade-in slide-in-from-left-10 duration-1000">
+                        <motion.img 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            src="/Computer Login Bro Illustration.svg" 
+                            alt="Login Illustration" 
+                            className="w-full max-w-2xl h-auto pointer-events-none select-none"
+                        />
                     </div>
 
                     {/* Auth Card */}

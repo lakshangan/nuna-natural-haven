@@ -1,13 +1,32 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import nodemailer from 'nodemailer';
 
-// Gmail SMTP transporter
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
+// Create transporter lazily to ensure env variables are loaded
+let transporter = null;
+
+const getTransporter = () => {
+    if (!transporter) {
+        const user = process.env.GMAIL_USER;
+        const pass = process.env.GMAIL_APP_PASSWORD?.replace(/\s/g, ''); // Remove spaces from app password
+
+        if (!user || !pass) {
+            console.error('[Email] 🚨 Gmail credentials missing! GMAIL_USER or GMAIL_APP_PASSWORD not set.');
+            return null;
+        }
+
+        console.log(`[Email] ⚙️ Initializing Gmail transporter for: ${user}`);
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: user,
+                pass: pass,
+            }
+        });
     }
-});
+    return transporter;
+};
 
 const FROM_NAME = 'Nuna Organics 🌿';
 const getFrom = () => `"${FROM_NAME}" <${process.env.GMAIL_USER}>`;
@@ -104,8 +123,11 @@ export const sendPurchaseConfirmationEmail = async ({ toEmail, orderNumber, item
     </html>`;
 
     try {
+        const mailTransporter = getTransporter();
+        if (!mailTransporter) return;
+
         console.log(`[Email] Attempting to send via Gmail to: ${toEmail}`);
-        const info = await transporter.sendMail({
+        const info = await mailTransporter.sendMail({
             from: getFrom(),
             to: toEmail,
             subject: `🌿 Your Nuna Organics Order #${orderNumber} is confirmed!`,
@@ -188,8 +210,11 @@ export const sendAbandonedCartEmail = async ({ toEmail, productName }) => {
     </html>`;
 
     try {
+        const mailTransporter = getTransporter();
+        if (!mailTransporter) return;
+
         console.log(`[Email] Sending abandoned cart via Gmail to: ${toEmail}`);
-        const info = await transporter.sendMail({
+        const info = await mailTransporter.sendMail({
             from: getFrom(),
             to: toEmail,
             subject: `🛒 Hey! Your ${productName || 'item'} is still waiting — 10% OFF inside`,
